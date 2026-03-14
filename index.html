@@ -855,14 +855,7 @@ const EXAMS = [
       img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-28_094428.jpg",
       imgCap:"Topologie Fa0/2 — téléphone IP + PC, sticky MAC, maximum 2",
       imgFallback:"Topologie montrant un téléphone IP et un PC connectés sur le port Fa0/2 du commutateur SWA. La configuration sticky MAC avec maximum 2 autorise ces deux appareils.",
-      opts:["SWA(config-if)# switchport port-security
-SWA(config-if)# switchport port-security maximum 2
-SWA(config-if)# switchport port-security mac-address sticky
-SWA(config-if)# switchport port-security violation restrict", "SWA(config-if)# switchport port-security
-SWA(config-if)# switchport port-security mac-address sticky", "SWA(config-if)# switchport port-security mac-address sticky
-SWA(config-if)# switchport port-security maximum 2", "SWA(config-if)# switchport port-security
-SWA(config-if)# switchport port-security maximum 2
-SWA(config-if)# switchport port-security mac-address sticky"],
+      opts:["SWA(config-if)# switchport port-security\nSWA(config-if)# switchport port-security maximum 2\nSWA(config-if)# switchport port-security mac-address sticky\nSWA(config-if)# switchport port-security violation restrict", "SWA(config-if)# switchport port-security\nSWA(config-if)# switchport port-security mac-address sticky", "SWA(config-if)# switchport port-security mac-address sticky\nSWA(config-if)# switchport port-security maximum 2", "SWA(config-if)# switchport port-security\nSWA(config-if)# switchport port-security maximum 2\nSWA(config-if)# switchport port-security mac-address sticky"],
       ans:[3],
       exp:"Le mode de violation par défaut est shutdown, donc la commande violation n'est pas nécessaire. switchport port-security doit être saisi sans options pour activer la sécurité."
     },
@@ -1276,11 +1269,7 @@ SWA(config-if)# switchport port-security mac-address sticky"],
       img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-29_093834.jpg",
       imgCap:"Topologie double FAI — route principale s0/0/0 DA=1, secours s0/1/0 DA=10",
       imgFallback:"Topologie avec un routeur connecté à deux FAI. La liaison principale utilise s0/0/0 et la liaison de secours s0/1/0. Deux routes par défaut avec DA différentes assurent le basculement automatique.",
-      opts:["ip route 198.133.219.24 255.255.255.252
-ip route 64.100.210.80 255.255.255.252 10", "ip route 0.0.0.0 0.0.0.0 s0/0/0
-ip route 0.0.0.0 0.0.0.0 s0/1/0 10", "ip route 0.0.0.0 0.0.0.0 s0/0/0
-ip route 0.0.0.0 0.0.0.0 s0/1/0", "ip route 198.133.219.24 255.255.255.252
-ip route 64.100.210.80 255.255.255.252"],
+      opts:["ip route 198.133.219.24 255.255.255.252\nip route 64.100.210.80 255.255.255.252 10", "ip route 0.0.0.0 0.0.0.0 s0/0/0\nip route 0.0.0.0 0.0.0.0 s0/1/0 10", "ip route 0.0.0.0 0.0.0.0 s0/0/0\nip route 0.0.0.0 0.0.0.0 s0/1/0", "ip route 198.133.219.24 255.255.255.252\nip route 64.100.210.80 255.255.255.252"],
       ans:[1],
       exp:"Deux routes par défaut : principale sur s0/0/0 (DA=1) et secours sur s0/1/0 (DA=10). La liaison de secours n'est utilisée que si la principale échoue."
     },
@@ -1475,15 +1464,7 @@ ip route 64.100.210.80 255.255.255.252"],
       img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-29_100301.jpg",
       imgCap:"Topologie Park-Alta-Internet — route défaut Park→Alta + route statique Alta→LAN Park + route défaut Alta→Internet",
       imgFallback:"Topologie avec routeur Park (réseau stub avec LAN 10.0.234.0), routeur Alta (connecté à Park et Internet). Park utilise une route par défaut vers Alta. Alta utilise une route par défaut vers Internet et une route statique vers le LAN de Park.",
-      opts:["Park: ip route 0.0.0.0 0.0.0.0 192.168.14.1
-Alta: ip route 10.0.234.0 255.255.255.0 192.168.14.2
-Alta: ip route 198.18.222.0 255.255.255.255 s0/0/0", "Park: ip route 172.16.67.0 255.255.255.0 192.168.14.1
-Alta: ip route 10.0.234.0 255.255.255.0 192.168.14.2
-Alta: ip route 0.0.0.0 0.0.0.0 s0/0/1", "Park: ip route 0.0.0.0 0.0.0.0 192.168.14.1
-Alta: ip route 10.0.234.0 255.255.255.0 192.168.14.2
-Alta: ip route 0.0.0.0 0.0.0.0 s0/0/0", "Park: ip route 172.16.67.0 255.255.255.0 192.168.14.1
-Park: ip route 0.0.0.0 0.0.0.0 192.168.14.1
-Alta: ip route 10.0.234.0 255.255.255.0 192.168.14.2"],
+      opts:["Park: ip route 0.0.0.0 0.0.0.0 192.168.14.1\nAlta: ip route 10.0.234.0 255.255.255.0 192.168.14.2\nAlta: ip route 198.18.222.0 255.255.255.255 s0/0/0", "Park: ip route 172.16.67.0 255.255.255.0 192.168.14.1\nAlta: ip route 10.0.234.0 255.255.255.0 192.168.14.2\nAlta: ip route 0.0.0.0 0.0.0.0 s0/0/1", "Park: ip route 0.0.0.0 0.0.0.0 192.168.14.1\nAlta: ip route 10.0.234.0 255.255.255.0 192.168.14.2\nAlta: ip route 0.0.0.0 0.0.0.0 s0/0/0", "Park: ip route 172.16.67.0 255.255.255.0 192.168.14.1\nPark: ip route 0.0.0.0 0.0.0.0 192.168.14.1\nAlta: ip route 10.0.234.0 255.255.255.0 192.168.14.2"],
       ans:[2],
       exp:"Park est un réseau stub → route par défaut vers Alta. Alta se connecte à Internet et à Park → route par défaut vers Internet + route statique vers le LAN de Park."
     },
