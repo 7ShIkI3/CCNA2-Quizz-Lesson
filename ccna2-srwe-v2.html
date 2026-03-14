@@ -1,0 +1,2248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCNA2 SRWE – Entraînement Complet</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+
+:root{--bg:#080c18;--s1:#0f1623;--s2:#161f32;--s3:#1c2844;--border:#1e3356;--accent:#00d4ff;--a2:#7c3aed;--a3:#06d6a0;--warn:#f59e0b;--err:#ef4444;--ok:#10b981;--text:#e2e8f0;--muted:#64748b;--mono:'Space Mono',monospace;--sans:'Syne',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,212,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
+
+/* ===== LOGIN ===== */
+#loginPage{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+#loginPage::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 40%,rgba(0,212,255,.08) 0%,transparent 70%)}
+.login-box{position:relative;z-index:1;background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:3rem 2.5rem;width:min(420px,90vw);text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.6)}
+.login-logo{font-size:3rem;margin-bottom:1rem}
+.login-title{font-size:1.6rem;font-weight:800;color:var(--accent);margin-bottom:.3rem}
+.login-sub{font-size:.85rem;color:var(--muted);margin-bottom:2rem}
+.login-input-wrap{position:relative;margin-bottom:1rem}
+.login-input{width:100%;padding:.9rem 1rem .9rem 3rem;background:var(--s2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--mono);font-size:.9rem;outline:none;transition:all .2s}
+.login-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,212,255,.1)}
+.login-icon{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:1rem}
+.login-btn{width:100%;padding:.9rem;background:linear-gradient(135deg,var(--accent),var(--a2));border:none;border-radius:10px;color:#000;font-family:var(--sans);font-size:.95rem;font-weight:800;cursor:pointer;transition:all .2s;letter-spacing:.05em}
+.login-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,212,255,.3)}
+.login-err{color:var(--err);font-size:.82rem;margin-top:.5rem;font-family:var(--mono);display:none}
+.login-hint{color:var(--muted);font-size:.75rem;margin-top:1rem;font-family:var(--mono)}
+
+/* ===== APP SHELL ===== */
+#app{display:none;flex-direction:column;height:100vh}
+#app.visible{display:flex}
+
+/* ===== TOP NAV ===== */
+.topnav{position:sticky;top:0;z-index:100;background:rgba(8,12,24,.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem;padding:0 1.5rem;height:60px;flex-shrink:0}
+.nav-logo{font-size:.95rem;font-weight:800;color:var(--accent);letter-spacing:-.01em;margin-right:.5rem;white-space:nowrap}
+.nav-logo span{color:var(--text)}
+.nav-exams{display:flex;gap:3px;overflow-x:auto;flex:1;scrollbar-width:none}
+.nav-exams::-webkit-scrollbar{display:none}
+.nav-btn{padding:.4rem .8rem;border-radius:6px;border:none;cursor:pointer;font-family:var(--sans);font-size:.72rem;font-weight:700;background:transparent;color:var(--muted);transition:all .2s;white-space:nowrap;letter-spacing:.03em}
+.nav-btn.active{background:var(--accent);color:#000}
+.nav-btn:hover:not(.active){background:var(--s3);color:var(--text)}
+.nav-score{font-family:var(--mono);font-size:.75rem;color:var(--accent);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);padding:.3rem .7rem;border-radius:20px;white-space:nowrap;margin-left:auto;flex-shrink:0}
+
+/* ===== MAIN LAYOUT ===== */
+.main{display:grid;grid-template-columns:220px 1fr;flex:1;overflow:hidden}
+
+/* ===== SIDEBAR ===== */
+.sidebar{background:var(--s1);border-right:1px solid var(--border);overflow-y:auto;padding:1rem .6rem;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.sidebar-title{font-size:.65rem;font-weight:800;letter-spacing:.15em;color:var(--muted);padding:.3rem .6rem;margin-bottom:.3rem}
+.sidebar-item{padding:.55rem .7rem;border-radius:7px;cursor:pointer;font-size:.78rem;color:var(--muted);transition:all .15s;display:flex;align-items:center;gap:.5rem;border-left:2px solid transparent}
+.sidebar-item:hover{color:var(--text);background:var(--s3)}
+.sidebar-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(0,212,255,.06)}
+.sidebar-item.done{color:var(--ok)}
+.sidebar-item .badge{margin-left:auto;font-family:var(--mono);font-size:.6rem;background:var(--s3);padding:.1rem .4rem;border-radius:10px}
+
+/* ===== CONTENT ===== */
+.content{overflow-y:auto;padding:1.5rem;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+
+/* ===== EXAM HEADER ===== */
+.exam-header{margin-bottom:1.5rem}
+.exam-title{font-size:1.4rem;font-weight:800;margin-bottom:.3rem}
+.exam-title .tag{font-size:.62rem;font-weight:700;letter-spacing:.1em;padding:.2rem .5rem;border-radius:20px;margin-right:.5rem;vertical-align:middle;background:rgba(0,212,255,.15);color:var(--accent);font-family:var(--mono)}
+.exam-meta{color:var(--muted);font-size:.82rem;display:flex;align-items:center;gap:1rem}
+.progress-row{display:flex;align-items:center;gap:.8rem;margin-top:1rem}
+.progress-bar-wrap{flex:1;background:var(--s2);border-radius:6px;height:6px;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--a2));border-radius:6px;transition:width .4s}
+.progress-text{font-family:var(--mono);font-size:.72rem;color:var(--muted);white-space:nowrap}
+
+/* ===== QUESTION CARD ===== */
+.qcard{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1rem;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.qcard-num{font-family:var(--mono);font-size:.65rem;color:var(--accent);letter-spacing:.15em;margin-bottom:.8rem;display:flex;align-items:center;gap:.4rem}
+.qcard-num::after{content:'';flex:1;height:1px;background:var(--border)}
+.qcard-multi-tag{font-size:.6rem;background:rgba(124,58,237,.2);color:#a78bfa;padding:.15rem .5rem;border-radius:10px;font-weight:700}
+.qcard-text{font-size:.9rem;font-weight:600;line-height:1.65;margin-bottom:1rem}
+.qcard-img{margin:.6rem 0 1rem;border-radius:10px;overflow:hidden;border:1px solid var(--border);background:#070b14}
+.qcard-img img{display:block;width:100%;max-height:320px;object-fit:contain;background:#070b14;transition:opacity .3s}
+.qcard-img img.err{display:none}
+.qcard-img .img-fallback{display:none;padding:1.8rem 1.2rem;background:linear-gradient(135deg,rgba(10,14,24,.95),rgba(22,31,50,.95));flex-direction:column;align-items:center;gap:.7rem;text-align:center}
+.qcard-img img.err~.img-fallback{display:flex}
+.img-fb-icon{font-size:2.2rem;opacity:.55}
+.img-fb-title{font-family:var(--mono);font-size:.8rem;color:var(--warn);font-weight:700;letter-spacing:.05em}
+.img-fb-desc{font-size:.78rem;color:var(--muted);line-height:1.6;max-width:380px}
+.img-fb-link{font-size:.72rem;color:var(--accent);text-decoration:none;font-family:var(--mono);border:1px solid rgba(0,212,255,.25);padding:.3rem .8rem;border-radius:6px;transition:all .15s;display:inline-flex;align-items:center;gap:.3rem}
+.img-fb-link:hover{background:rgba(0,212,255,.08);border-color:var(--accent)}
+.qcard-img-cap{padding:.35rem .8rem;font-size:.66rem;color:var(--muted);font-family:var(--mono);border-top:1px solid var(--border);display:flex;align-items:center;gap:.4rem}
+.sidebar-item.lessons-sb.active{color:#a78bfa;border-left-color:#a78bfa;background:rgba(124,58,237,.06)}
+.nav-btn.lessons-nb.active{background:var(--a2);color:#fff}
+
+/* ===== OPTIONS ===== */
+.opts{display:flex;flex-direction:column;gap:.45rem}
+.opt{padding:.75rem 1rem;border-radius:9px;border:1px solid var(--border);background:var(--s2);cursor:pointer;font-size:.85rem;line-height:1.5;display:flex;align-items:flex-start;gap:.7rem;text-align:left;color:var(--text);width:100%;font-family:var(--sans);transition:all .15s}
+.opt:hover:not(.disabled){border-color:var(--accent);background:rgba(0,212,255,.05)}
+.opt.sel{border-color:var(--accent);background:rgba(0,212,255,.1)}
+.opt.correct{border-color:var(--ok);background:rgba(16,185,129,.1);color:#6ee7b7}
+.opt.wrong{border-color:var(--err);background:rgba(239,68,68,.1);color:#fca5a5}
+.opt.disabled{cursor:not-allowed}
+.opt-ic{min-width:22px;height:22px;border-radius:5px;background:var(--s3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.65rem;font-weight:700;flex-shrink:0}
+.chk{min-width:16px;height:16px;border-radius:3px;border:1.5px solid var(--muted);display:flex;align-items:center;justify-content:center;font-size:.6rem;flex-shrink:0;margin-top:2px}
+.opt.sel .chk{background:var(--accent);border-color:var(--accent);color:#000}
+.opt.correct .chk{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.wrong .chk{background:var(--err);border-color:var(--err);color:#fff}
+
+/* ===== FEEDBACK ===== */
+.feedback{margin-top:.8rem;padding:.8rem 1rem;border-radius:9px;font-size:.83rem;line-height:1.6;display:none;animation:fadeUp .2s ease}
+.feedback.show{display:block}
+.feedback.ok{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);color:#a7f3d0}
+.feedback.ko{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);color:#fecaca}
+.feedback-title{font-weight:800;margin-bottom:.3rem;font-size:.88rem}
+
+/* ===== ACTIONS ===== */
+.qcard-actions{display:flex;justify-content:flex-end;gap:.6rem;margin-top:1.2rem}
+.btn-val{padding:.55rem 1.3rem;border-radius:7px;border:none;cursor:pointer;font-family:var(--sans);font-size:.82rem;font-weight:700;background:var(--accent);color:#000;transition:all .15s}
+.btn-val:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,212,255,.25)}
+.btn-val:disabled{opacity:.35;cursor:not-allowed}
+.btn-next{padding:.55rem 1.3rem;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-family:var(--sans);font-size:.82rem;font-weight:700;background:var(--s2);color:var(--text);transition:all .15s;display:none}
+.btn-next.show{display:block}
+.btn-next:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ===== RESULTS ===== */
+.results{background:var(--s1);border:1px solid var(--border);border-radius:18px;padding:2.5rem;text-align:center;max-width:480px;margin:2rem auto;animation:fadeUp .4s ease}
+.res-emoji{font-size:3.5rem;margin-bottom:.8rem}
+.res-score{font-size:3.5rem;font-weight:800;color:var(--accent);font-family:var(--mono)}
+.res-pct{color:var(--muted);margin-bottom:1.5rem;font-size:.88rem}
+.res-stars{font-size:1.8rem;margin-bottom:1.2rem;letter-spacing:.15rem}
+.res-msg{color:var(--muted);font-size:.85rem;margin-bottom:1.5rem}
+.btn-restart{padding:.7rem 1.8rem;border-radius:8px;border:none;cursor:pointer;font-family:var(--sans);font-size:.88rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--a2));color:#fff;transition:all .2s}
+.btn-restart:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,212,255,.2)}
+
+/* ===== DASHBOARD ===== */
+.dashboard{max-width:900px}
+.dash-hero{text-align:center;padding:2rem 0 2.5rem}
+.dash-hero h1{font-size:2rem;font-weight:800;margin-bottom:.5rem}
+.dash-hero h1 span{color:var(--accent)}
+.dash-hero p{color:var(--muted);font-size:.9rem}
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;margin-top:1.5rem}
+.dash-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:1.3rem 1.4rem;cursor:pointer;transition:all .2s}
+.dash-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.dash-card-tag{font-size:.62rem;font-weight:700;letter-spacing:.1em;font-family:var(--mono);padding:.2rem .5rem;border-radius:10px;display:inline-block;margin-bottom:.6rem}
+.tag-cp{background:rgba(0,212,255,.15);color:var(--accent)}
+.tag-pf{background:rgba(245,158,11,.15);color:var(--warn)}
+.tag-fi{background:rgba(6,214,160,.15);color:var(--a3)}
+.dash-card h3{font-size:.95rem;font-weight:700;margin-bottom:.3rem}
+.dash-card p{font-size:.78rem;color:var(--muted)}
+.dash-card .dash-stats{display:flex;gap:1rem;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border)}
+.dash-stat{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+.dash-stat span{color:var(--text);font-weight:700}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .main{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .topnav{padding:0 .8rem}
+  .content{padding:1rem}
+  .nav-logo{font-size:.8rem}
+}
+
+
+/* ===== LESSONS ===== */
+.lessons-layout{display:grid;grid-template-columns:220px 1fr;gap:0;height:100%;overflow:hidden}
+.lessons-nav{background:var(--s1);border-right:1px solid var(--border);overflow-y:auto;padding:.8rem .5rem;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.lessons-nav-title{font-size:.6rem;font-weight:800;letter-spacing:.15em;color:var(--muted);padding:.3rem .6rem;margin:.4rem 0 .2rem}
+.lnav-item{padding:.5rem .7rem;border-radius:6px;cursor:pointer;font-size:.75rem;color:var(--muted);transition:all .15s;display:flex;align-items:center;gap:.4rem;border-left:2px solid transparent;line-height:1.3}
+.lnav-item:hover{color:var(--text);background:var(--s3)}
+.lnav-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(0,212,255,.06)}
+.lnav-chapter{padding:.4rem .5rem .4rem 1.4rem;border-radius:5px;cursor:pointer;font-size:.72rem;color:var(--muted);transition:all .15s;border-left:1px solid transparent}
+.lnav-chapter:hover{color:var(--text);background:var(--s3)}
+.lnav-chapter.active{color:#a78bfa;border-left-color:#a78bfa;background:rgba(124,58,237,.06)}
+.lessons-content{overflow-y:auto;padding:1.5rem;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.lesson-section{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:1.6rem;margin-bottom:1.2rem;animation:fadeUp .25s ease}
+.lesson-section h2{font-size:1.2rem;font-weight:800;margin-bottom:1.2rem;padding-bottom:.8rem;border-bottom:1px solid var(--border)}
+.lesson-section h2 .mod-tag{font-size:.6rem;font-weight:700;letter-spacing:.1em;padding:.2rem .5rem;border-radius:10px;background:rgba(0,212,255,.15);color:var(--accent);font-family:var(--mono);margin-right:.5rem;vertical-align:middle}
+.lesson-section h3{font-size:.95rem;font-weight:700;color:var(--accent);margin:1.2rem 0 .6rem}
+.lesson-section p{font-size:.85rem;line-height:1.7;color:#cbd5e1;margin-bottom:.7rem}
+.lesson-section ul,.lesson-section ol{padding-left:1.2rem;margin-bottom:.7rem}
+.lesson-section li{font-size:.85rem;line-height:1.7;color:#cbd5e1;margin-bottom:.25rem}
+.lesson-section strong{color:var(--text)}
+.ls-code{background:#070b14;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;padding:.9rem 1.1rem;font-family:var(--mono);font-size:.75rem;line-height:1.7;color:#79c0ff;margin:.7rem 0;overflow-x:auto;white-space:pre}
+.ls-table-wrap{overflow-x:auto;margin:.7rem 0}
+.ls-table{width:100%;border-collapse:collapse;font-size:.82rem}
+.ls-table th{background:var(--s2);padding:.5rem .7rem;text-align:left;color:var(--accent);font-family:var(--mono);font-size:.7rem;letter-spacing:.05em;border-bottom:1px solid var(--border)}
+.ls-table td{padding:.5rem .7rem;border-bottom:1px solid rgba(30,58,95,.4);color:#cbd5e1;vertical-align:top}
+.ls-table tr:hover td{background:rgba(255,255,255,.015)}
+.ls-box{padding:.9rem 1.1rem;border-radius:9px;margin:.7rem 0;font-size:.83rem;line-height:1.6}
+.ls-box.blue{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2);color:#a5f3fc}
+.ls-box.green{background:rgba(6,214,160,.06);border:1px solid rgba(6,214,160,.2);color:#6ee7b7}
+.ls-box.orange{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);color:#fcd34d}
+.ls-box.red{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);color:#fca5a5}
+.ls-box strong{color:inherit}
+.ls-abbr{background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:.8rem 1rem;margin:.7rem 0}
+.ls-abbr>div{display:flex;align-items:flex-start;gap:.7rem;padding:.3rem 0;border-bottom:1px solid rgba(30,58,95,.3);font-size:.8rem;color:#94a3b8;line-height:1.5}
+.ls-abbr>div:last-child{border-bottom:none}
+.ls-abbr span{font-family:var(--mono);font-size:.72rem;font-weight:700;color:var(--accent);background:rgba(0,212,255,.1);padding:.1rem .5rem;border-radius:4px;white-space:nowrap;flex-shrink:0}
+@media(max-width:768px){.lessons-layout{grid-template-columns:1fr}.lessons-nav{display:flex;flex-wrap:wrap;gap:3px;border-right:none;border-bottom:1px solid var(--border);padding:.5rem}.lnav-item{border-left:none;border-bottom:2px solid transparent;padding:.4rem .6rem}.lnav-item.active{border-bottom-color:var(--accent);border-left:none}.lnav-chapter{display:none}}
+
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage">
+  <div class="login-box">
+    <div class="login-logo">🎓</div>
+    <div class="login-title">CCNA2 SRWE</div>
+    <div class="login-sub">Site d'entraînement — Accès sécurisé</div>
+    <div class="login-input-wrap">
+      <span class="login-icon">🔒</span>
+      <input class="login-input" type="password" id="pwdInput" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')tryLogin()">
+    </div>
+    <button class="login-btn" onclick="tryLogin()">Se connecter</button>
+    <div class="login-err" id="loginErr">❌ Mot de passe incorrect</div>
+    <div class="login-hint">Indice : ccna + numéro de la certification</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <nav class="topnav">
+    <div class="nav-logo">CCNA2 <span>SRWE</span></div>
+    <div class="nav-exams" id="navExams">
+    <button class="nav-btn" onclick="showLessonsPage()" id="nav-lessons">📚 Leçons</button>
+  </div>
+    <div class="nav-score" id="navScore">🏆 0 pts</div>
+  </nav>
+  <div class="main">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="content" id="content"></main>
+  </div>
+</div>
+
+<script>
+// ==================== AUTH ====================
+function tryLogin(){
+  const v=document.getElementById('pwdInput').value.trim();
+  if(v==='ccna2'){
+    document.getElementById('loginPage').style.display='none';
+    document.getElementById('app').classList.add('visible');
+    initApp();
+  } else {
+    document.getElementById('loginErr').style.display='block';
+    document.getElementById('pwdInput').value='';
+    document.getElementById('pwdInput').focus();
+  }
+}
+
+// ==================== DATA ====================
+
+const EXAMS = [
+  {
+    id:'m14',
+    tag:'CHECKPOINT',
+    tagClass:'tag-cp',
+    title:'Modules 1–4 : Commutation, VLAN & Inter-VLAN',
+    short:'Mods 1–4',
+    questions: [
+      {q:"Quelle commande définit la variable d'environnement BOOT sur un commutateur ?",
+       opts:["config-register","confreg","boot loader","boot system"],ans:[3],
+       explain:"La commande <strong>boot system</strong> définit la variable BOOT. config-register et confreg gèrent le registre de configuration, boot loader gère le système de fichiers flash."},
+      {q:"Qu'est-ce qu'un commutateur utilise pour localiser et charger l'image IOS ?",
+       opts:["Fichier image IOS","Variable d'environnement BOOT","NVRAM","Configuration initiale","POST"],ans:[1],
+       explain:"La variable d'environnement <strong>BOOT</strong> contient l'emplacement du fichier image IOS."},
+      {q:"Quel protocole renforce la sécurité des connexions à distance ?",
+       opts:["SSH","HTTP","NetBEUI","FTP","POP"],ans:[0],
+       explain:"<strong>SSH</strong> (Secure Shell) permet des connexions sécurisées et chiffrées aux périphériques réseau."},
+      {q:"Quelle caractéristique décrit la commutation cut-through ?",
+       opts:["Seules les trames sortantes subissent une vérification d'erreurs","Fragments exempts d'erreurs transmis avec faible latence","Trames transmises sans aucune vérification d'erreurs","Mise en mémoire tampon pour différentes vitesses Ethernet"],ans:[2],
+       explain:"La commutation <strong>cut-through</strong> transmet dès la lecture de la MAC destination, sans vérification d'erreur (pas de FCS)."},
+      {q:"Quelle est la différence significative entre un hub et un commutateur LAN de couche 2 ?",
+       opts:["Un hub divise les domaines de collision","Chaque port de hub = domaine de collision, chaque port de switch = domaine de diffusion","Un hub étend un domaine de collision, un commutateur divise les domaines de collision","Un hub transmet des cadres, un switch transmet uniquement des paquets"],ans:[2],
+       explain:"Un <strong>hub</strong> étend le domaine de collision. Un <strong>commutateur</strong> crée un domaine de collision par port, réduisant ainsi les collisions."},
+      {q:"Parmi les propositions sur les décisions de transfert d'un commutateur Ethernet, laquelle est vraie ?",
+       opts:["Basées sur l'adresse MAC et les mappages des ports dans la table MAC","Les trames à adresses MAC inconnues sont abandonnées","Les tables d'adresses MAC se basent sur la MAC de destination des trames entrantes","Les trames monodiffusion sont toujours transmises"],ans:[0],
+       explain:"Les décisions de transfert sont basées sur les <strong>correspondances MAC/port</strong> de la table d'adresses MAC."},
+      {q:"Comment les tampons de commutateur affectent-ils les performances du réseau ?",
+       opts:["Conservent les données lors d'une collision","Stockent les trames reçues, évitant le rejet prématuré en cas de congestion","Fournissent une vérification des erreurs sur les données","Fournissent mémoire supplémentaire si négociation auto échoue"],ans:[1],
+       explain:"Les <strong>tampons</strong> stockent temporairement les trames en attente de transmission pour éviter leur perte lors de congestion."},
+      {q:"Quelle caractéristique du commutateur réduit la congestion réseau ?",
+       opts:["Grands tampons de trame","Commutation interne rapide","Vitesse de port rapide","Nombre de ports élevé (haute densité)"],ans:[3],
+       explain:"La <strong>haute densité de ports</strong> garde le trafic local sur le commutateur, réduisant le besoin de l'envoyer vers d'autres commutateurs."},
+      {q:"Quelle méthode de commutation garantit que la trame est sans erreur avant le transfert ?",
+       opts:["Cut-Through","FCS","Fragment-Free","Store-and-Forward"],ans:[3],
+       explain:"<strong>Store-and-Forward</strong> vérifie la valeur FCS (Frame Check Sequence) complète avant de transmettre la trame."},
+      {q:"Sur un commutateur avec plusieurs VLAN, quelle commande supprime uniquement le VLAN 100 ?",
+       opts:["Switch(config-if)# no switchport access vlan 100","Switch(config-if)# no switchport trunk allowed vlan 100","Switch# delete flash:vlan.dat","Switch(config)# no vlan 100"],ans:[3],
+       explain:"<code>no vlan 100</code> en mode de configuration globale supprime le VLAN 100. <code>delete flash:vlan.dat</code> supprime TOUS les VLANs."},
+      {q:"Un réseau avec plusieurs VLAN : que se passe-t-il quand un périphérique du VLAN 20 envoie une trame de diffusion ?",
+       opts:["Tous les périphériques de tous les VLAN voient la trame","Les périphériques du VLAN 20 et le VLAN de gestion","Seuls les périphériques du VLAN 20","Seuls les périphériques du commutateur local"],ans:[2],
+       explain:"Les VLANs créent des domaines de diffusion isolés. Seuls les périphériques du <strong>même VLAN</strong> reçoivent la diffusion."},
+      {q:"Que se passe-t-il quand le VLAN auquel des ports sont affectés est supprimé ?",
+       opts:["Les ports sont désactivés","Les ports cessent de communiquer avec les appareils","Les ports sont placés en mode Trunk","Les ports sont affectés au VLAN par défaut VLAN1"],ans:[1],
+       explain:"Les ports dont le VLAN est supprimé <strong>ne peuvent plus communiquer</strong>. Ils doivent être réaffectés à un VLAN actif."},
+      {q:"Quel est l'impact d'un commutateur de couche 2 sur un réseau ?",
+       opts:["Augmentation de la taille du domaine de collision","Augmentation du nombre de collisions","Augmentation de la taille du domaine de diffusion","Augmentation du nombre de trames ignorées"],ans:[2],
+       explain:"Un commutateur L2 augmente la taille du <strong>domaine de diffusion</strong> mais diminue les domaines de collision (un par port)."},
+      {q:"Quelles informations sont ajoutées à la table MAC à partir des trames entrantes ?",
+       opts:["IP de destination et port entrant","MAC de destination et port entrant","MAC source et numéro de port entrant","IP source et port entrant"],ans:[2],
+       explain:"Un commutateur apprend les <strong>adresses MAC sources</strong> des trames entrantes associées au port d'entrée."},
+      {q:"Quel type de VLAN est initialement le VLAN de gestion ?",
+       opts:["VLAN de gestion","VLAN par défaut","VLAN données","VLAN natif"],ans:[1],
+       explain:"Par défaut, le VLAN de gestion est le <strong>VLAN par défaut</strong> (VLAN 1) jusqu'à ce qu'un admin le reconfigure."},
+      {q:"Quel est l'effet de la commande 'BranchSw(config-if)# shutdown' ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/CCNA2-v7-Modules-1-4-Switching-Concepts-VLANs-and-InterVLAN-Routing-Exam-Answers-39-1.png",
+        imgCap:"CLI IOS — effet de 'shutdown' sur une interface",
+        imgFallback:"Montre le CLI IOS avec 'BranchSw(config-if)# shutdown' tapé sur une interface. La commande désactive administrativement l'interface (état admin down). Pour la réactiver : 'no shutdown'.",
+       opts:["Met à jour la table MAC","Enregistre la config active","Active une interface","Enregistre en NVRAM","Désactive une interface virtuelle ou physique"],ans:[4],
+       explain:"La commande <strong>shutdown</strong> désactive (administrativement) l'interface. <strong>no shutdown</strong> la réactive."},
+      {q:"Quelle commande affiche le type d'encapsulation, l'ID VLAN voix et le mode d'accès pour Fa0/1 ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/CCNA2-v7-Modules-1-4-Switching-Concepts-VLANs-and-InterVLAN-Routing-Exam-Answers-44.png",
+        imgCap:"show interfaces Fa0/1 switchport — encapsulation, VLAN voix, mode accès",
+        imgFallback:"Sortie de 'show interfaces Fa0/1 switchport' affichant Administrative Mode=access, Operational Mode=access, Encapsulation=Native, Voice VLAN=150. La commande correcte est 'show interfaces Fa0/1 switchport'.",
+       opts:["show interfaces trunk","show vlan brief","show mac address-table interface Fa0/1","show interfaces Fa0/1 switchport"],ans:[3],
+       explain:"<code>show interfaces Fa0/1 switchport</code> affiche le mode admin, l'encapsulation, les VLAN données et voix."},
+      {q:"Dans quels cas un admin doit désactiver DTP ? (DEUX réponses)",
+       opts:["Commutateur voisin en mode dynamic auto","Commutateur voisin en mode dynamic desirable","Connexion à un commutateur tiers","Sur les liaisons qui ne doivent pas être agrégées","Sur les liaisons qui tentent l'agrégation dynamiquement"],ans:[2,3],multi:true,
+       explain:"DTP doit être désactivé quand un <strong>commutateur tiers</strong> est connecté et sur les <strong>liaisons non destinées à être trunk</strong>."},
+      {q:"Quel type de VLAN est utilisé pour indiquer les trafics non étiquetés sur un port trunk ?",
+       opts:["données","par défaut","natif","management"],ans:[2],
+       explain:"Le <strong>VLAN natif</strong> reçoit les trames non étiquetées sur une liaison trunk 802.1Q."},
+      {q:"La commande 'show vlan brief' affiche quel résultat ?",
+       opts:["Affectation des VLAN et périphériques par MAC","Affectation des VLAN et encapsulation trunk","Affectation des VLAN et tous les ports qui leur appartiennent","Affectation des VLAN et réseau VLAN natif"],ans:[2],
+       explain:"<code>show vlan brief</code> affiche les <strong>VLAN et leurs ports associés</strong>."},
+      {q:"Un lycée utilise VLAN15 pour TP et VLAN30 pour enseignants. Quel élément est nécessaire pour router-on-a-stick ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/CCNA2-v7-Modules-1-4-Switching-Concepts-VLANs-and-InterVLAN-Routing-Exam-Answers-46.png",
+        imgCap:"Topologie router-on-a-stick — commutateur relié routeur via trunk",
+        imgFallback:"Montre un lycée avec 2 commutateurs (VLAN 15 = TP, VLAN 30 = Enseignants) reliés à un routeur. Pour router entre les VLANs avec router-on-a-stick, le port du commutateur vers le routeur doit être configuré en mode trunk.",
+       opts:["Routeur avec au moins deux interfaces LAN","Commutateur multicouche","Deux groupes de commutateurs par VLAN","Commutateur avec port configuré en trunk connecté au routeur"],ans:[3],
+       explain:"En router-on-a-stick, le <strong>port du commutateur</strong> connecté au routeur doit être configuré en mode <strong>trunk</strong>."},
+      {q:"Quelles quatre étapes configurent un VLAN voix sur un port ? (QUATRE réponses)",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-27_102335.jpg",
+        imgCap:"Configuration VLAN voix — 4 étapes requises sur un port",
+        imgFallback:"Montre la configuration d'un port pour VLAN voix. Les 4 étapes sont : 1) configurer le port en mode access, 2) ajouter un VLAN voix (switchport voice vlan), 3) assigner un VLAN données au port, 4) assigner le VLAN voix au port.",
+       opts:["Configurer le port en mode accès","Ajouter un VLAN voix","Configurer des sous-interfaces sur l'interface","Configurer l'interface en trunk IEEE 802.1Q","Activer PortFast","Assigner un VLAN données au port","S'assurer que le trafic voix est approuvé (CoS)","Assigner le VLAN voix au port"],ans:[0,1,5,7],multi:true,
+       explain:"Pour un VLAN voix : mode accès + créer VLAN voix + assigner VLAN données + assigner VLAN voix + trust CoS."},
+      {q:"Quelle commande affiche des informations sur auto-MDIX pour une interface ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/CCNA2-v7-Modules-1-4-Switching-Concepts-VLANs-and-InterVLAN-Routing-Exam-Answers-70.jpg",
+        imgCap:"show controllers — informations auto-MDIX sur l'interface",
+        imgFallback:"Montre la sortie de 'show controllers ethernet-controller' avec le mot-clé 'phy'. Cette commande affiche les paramètres auto-MDIX de l'interface. Auto-MDIX détecte automatiquement le type de câble (droit ou croisé).",
+       opts:["show controllers","show processes","show interfaces","show running-config"],ans:[0],
+       explain:"<code>show controllers ethernet-controller</code> avec le mot-clé <strong>phy</strong> affiche les paramètres auto-MDIX."},
+      {q:"Si un côté Ethernet est full duplex et l'autre semi-duplex, où les collisions tardives se produisent-elles ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/CCNA2-v7-Modules-1-4-Switching-Concepts-VLANs-and-InterVLAN-Routing-Exam-Answers-71.jpg",
+        imgCap:"Topologie duplex mismatch — full-duplex vs semi-duplex",
+        imgFallback:"Montre deux équipements : l'un configuré en full-duplex et l'autre en semi-duplex (duplex mismatch). Les collisions tardives (late collisions) se produisent uniquement sur l'extrémité en semi-duplex, car elle détecte une collision après avoir transmis plus de 64 octets.",
+       opts:["Sur l'extrémité semi-duplex","Uniquement sur les interfaces série","Sur l'extrémité full duplex","Sur les deux extrémités"],ans:[0],
+       explain:"L'extrémité en mode <strong>semi-duplex</strong> subit les collisions tardives lors de l'incohérence de configuration duplex."},
+      {q:"Quelle est la taille minimale d'une trame Ethernet pour ne pas être rejetée ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/CCNA2-v7-Modules-1-4-Switching-Concepts-VLANs-and-InterVLAN-Routing-Exam-Answers-74.png",
+        imgCap:"Trame Ethernet — taille minimale 64 octets (runt frame)",
+        imgFallback:"Montre la structure d'une trame Ethernet avec ses champs (Préambule, Dest MAC, Src MAC, Type, Données, FCS). La taille minimale est 64 octets. Une trame inférieure est appelée 'runt frame' et est rejetée par les commutateurs.",
+       opts:["64 octets","512 octets","1024 octets","1500 octets"],ans:[0],
+       explain:"La taille minimale d'une trame Ethernet est de <strong>64 octets</strong>. En dessous, elle est rejetée comme fragment de collision."},
+      {q:"Quelle est la caractéristique d'une interface de bouclage IPv4 sur un routeur IOS ?",
+       opts:["Une seule peut être active","Attribuée à un port physique","Interface logique interne du routeur","La commande no shutdown est requise"],ans:[2],
+       explain:"L'interface loopback est une <strong>interface logique interne</strong>, toujours UP tant que le routeur fonctionne, sans port physique."},
+      {q:"Quels sont les deux inconvénients de Router-on-a-Stick vs commutateur multicouche avec de nombreux VLANs ? (DEUX réponses)",
+       opts:["Sous-interfaces doivent être sur les mêmes sous-réseaux","Un routeur dédié est nécessaire","Plusieurs sous-interfaces peuvent affecter le débit","Router-on-a-Stick nécessite plusieurs interfaces physiques","Plusieurs interfaces SVI sont nécessaires"],ans:[1,2],multi:true,
+       explain:"Router-on-a-stick nécessite un <strong>routeur dédié</strong> et toutes les sous-interfaces partagent une seule interface physique, ce qui <strong>réduit le débit</strong>."},
+      {q:"Quels énoncés décrivent le VLAN natif ? (DEUX réponses)",
+       opts:["Le trafic VLAN natif n'est pas étiqueté sur le trunk","Fournit un identificateur commun aux deux extrémités d'une agrégation","Nécessaire pour la gestion à distance","VLAN par défaut pour les utilisateurs","Le trafic prioritaire (voix) utilise le VLAN natif"],ans:[0,1],multi:true,
+       explain:"Le VLAN natif reçoit le trafic <strong>non étiqueté</strong> sur le trunk et <strong>identifie</strong> les deux extrémités du lien trunk."},
+      {q:"Quelle solution réduit la congestion causée par les collisions dans une université ?",
+       opts:["Routeur avec trois ports Ethernet","Pare-feu avec deux FAI","Commutateur à densité de ports élevée","Routeur avec deux ports Ethernet"],ans:[2],
+       explain:"Un <strong>commutateur à haute densité de ports</strong> microsegmente le réseau, éliminant les collisions."},
+      {q:"Deux avantages du routage inter-VLAN SVI ? (DEUX réponses)",
+       opts:["Pas besoin d'un routeur","La commutation de paquets est plus rapide avec SVI","Les interfaces virtuelles prennent en charge les sous-interfaces","Les SVIs peuvent être regroupés en EtherChannels","Les SVI éliminent le besoin de passerelle par défaut"],ans:[0,1],multi:true,
+       explain:"Le routage inter-VLAN SVI ne nécessite <strong>pas de routeur externe</strong> et la commutation est <strong>plus rapide</strong> (effectuée dans le commutateur)."},
+      {q:"Quel composant de commutateur réduit le temps de traitement des paquets ?",
+       opts:["Processeurs doubles","Grosses mémoires tampons","ASIC","RAM store-and-forward"],ans:[2],
+       explain:"Les <strong>ASIC</strong> (Application-Specific Integrated Circuits) accélèrent le traitement des commutateurs."},
+      {q:"Quel type de VLAN est conçu pour un délai de moins de 150 ms ?",
+       opts:["VLAN trunk","VLAN souhaitable","VLAN voix","VLAN de sécurité"],ans:[2],
+       explain:"Le <strong>VLAN voix</strong> est conçu avec une QoS garantissant un délai inférieur à 150 ms pour la qualité VoIP."},
+      {q:"Quel type de VLAN ne devrait pas transporter le trafic de gestion vocale et réseau ?",
+       opts:["VLAN trunk","VLAN de sécurité","VLAN données","VLAN voix"],ans:[2],
+       explain:"Le <strong>VLAN données</strong> ne doit pas transporter le trafic de gestion ou vocal — ces trafics ont leurs propres VLANs dédiés."},
+      {q:"Combien de sous-interfaces créer si chaque VLAN doit être routé et que l'imprimante, PC, téléphone IP et VLAN de gestion sont sur des VLANs différents ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/CCNA2-v7-Modules-1-4-Switching-Concepts-VLANs-and-InterVLAN-Routing-Exam-Answers-32.png",
+        imgCap:"Router-on-a-Stick — PC, imprimante, téléphone IP, VLAN gestion = 4 sous-interfaces",
+        imgFallback:"Montre un réseau avec 4 groupes sur des VLANs différents : PC (VLAN 10), imprimante (VLAN 20), téléphone IP (VLAN 30), et VLAN de gestion du switch (VLAN 99). Il faut donc créer 4 sous-interfaces sur le routeur pour router entre ces 4 VLANs.",
+       opts:["1","2","3","4","5"],ans:[3],
+       explain:"4 périphériques sur 4 VLANs différents → <strong>4 sous-interfaces</strong> sur le routeur."},
+      {q:"Combien de domaines de diffusion sont affichés avec 4 liens entre routeurs et 4 LANs ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-27_093709.jpg",
+        imgCap:"Topologie réseau — 4 routeurs interconnectés + 4 LANs = 8 domaines de diffusion",
+        imgFallback:"Montre une topologie avec 4 routeurs interconnectés (4 liens point-à-point = 4 domaines de diffusion) et 4 LANs connectés (4 domaines supplémentaires). Total = 8 domaines de diffusion. Les routeurs délimitent les domaines de diffusion.",
+       opts:["16","1","55","8","4"],ans:[3],
+       explain:"4 liens WAN entre routeurs + 4 LANs = <strong>8 domaines de diffusion</strong>. Un routeur délimite les domaines de diffusion."},
+      {q:"Quel est l'effet de 'BranchSw# configure terminal' ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/CCNA-2-v7-Modules-1-4-Switching-Concepts-VLANs-and-InterVLAN-Routing-Exam-27.jpg",
+        imgCap:"CLI IOS — BranchSw# configure terminal",
+        imgFallback:"Montre le CLI IOS avec 'BranchSw# configure terminal' tapé en mode EXEC privilégié. Cette commande fait passer en mode de configuration globale (Global Configuration Mode), indiqué par le prompt 'BranchSw(config)#'.",
+       opts:["Met à jour la table MAC","Passe en mode de configuration globale","Entre en mode de configuration SVI","Configure une adresse IPv6 sur interface physique","Applique une adresse IPv4 à l'interface virtuelle"],ans:[1],
+       explain:"<code>configure terminal</code> fait passer en <strong>mode de configuration globale</strong>."},
+      {q:"Quel est l'effet de 'BranchSw(config-if)# exit' ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/CCNA2-v7-SRWE-%E2%80%93-Modules-1-%E2%80%93-4-Switching-Concepts-VLANs-and-InterVLAN-Routing-Exam-Answers-29.png",
+        imgCap:"CLI IOS — BranchSw(config-if)# exit",
+        imgFallback:"Montre le CLI IOS avec 'BranchSw(config-if)# exit' tapé en mode configuration d'interface. La commande 'exit' retourne au mode de configuration globale (prompt revient à 'BranchSw(config)#').",
+       opts:["Retourne au mode de configuration globale","Repasse en mode EXEC privilégié","Entre en mode utilisateur","Configure la passerelle par défaut","Enregistre la config active"],ans:[0],
+       explain:"<code>exit</code> en mode de configuration d'interface retourne au <strong>mode de configuration globale</strong>."},
+      {q:"Après quelle étape le boot loader est-il exécuté dans la séquence de démarrage ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-27_095031.jpg",
+        imgCap:"Séquence de démarrage — étape précédant l'exécution du boot loader",
+        imgFallback:"Montre la séquence de démarrage d'un commutateur Cisco : 1) POST (Power-On Self-Test) 2) Boot loader 3) Initialisation CPU 4) Flash init 5) Chargement IOS. Le boot loader est exécuté juste après le POST (Power-On Self-Test).",
+       opts:["Après POST","Après l'initialisation du système de fichiers flash","Après l'initialisation de l'UC","Après la localisation IOS"],ans:[0],
+       explain:"Séquence : POST → <strong>boot loader</strong> → init CPU → init flash → localisation IOS."},
+      {q:"Si 'no switchport access vlan 30' est saisie sur Fa0/11 affecté au VLAN 30, que se passe-t-il ?",
+       opts:["Fa0/11 est renvoyé au VLAN 1","Fa0/11 est mis hors service","VLAN 30 est supprimé","Un message d'erreur s'affiche"],ans:[0],
+       explain:"La commande <code>no switchport access vlan</code> retourne le port au <strong>VLAN par défaut VLAN 1</strong>."},
+      {q:"Quel type de VLAN est configuré pour SSH, Telnet, HTTPS, HTTP et SNMP ?",
+       opts:["VLAN de sécurité","VLAN voix","VLAN de gestion","VLAN trunk"],ans:[2],
+       explain:"Le <strong>VLAN de gestion</strong> transporte le trafic d'administration réseau (SSH, Telnet, SNMP, etc.)."},
+      {q:"Quel type de VLAN prend en charge le trafic non étiqueté ?",
+       opts:["VLAN natif","VLAN de sécurité","VLAN trunk","VLAN souhaitable"],ans:[0],
+       explain:"Le <strong>VLAN natif</strong> est le VLAN qui reçoit les trames non étiquetées sur un port trunk 802.1Q."},
+      {q:"Quel type de VLAN est utilisé pour séparer le réseau en groupes d'utilisateurs ?",
+       opts:["VLAN natif","VLAN données","VLAN voix","VLAN de gestion"],ans:[1],
+       explain:"Le <strong>VLAN données</strong> (ou VLAN utilisateur) segmente le réseau en groupes logiques d'utilisateurs ou d'équipements."},
+      {q:"Quel est l'effet de 'BranchSw(config-if)# mdix auto' ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/CCNA2-v7-Modules-1-4-Switching-Concepts-VLANs-and-InterVLAN-Routing-Exam-Answers-43.png",
+        imgCap:"CLI IOS — BranchSw(config-if)# mdix auto",
+        imgFallback:"Montre le CLI IOS avec 'BranchSw(config-if)# mdix auto' tapé sur une interface. Cette commande active Auto-MDIX qui détecte automatiquement le type de câble (droit ou croisé) et configure l'interface en conséquence.",
+       opts:["Ajuste automatiquement le port pour câble direct ou croisé","Met à jour la table MAC","Configure une adresse IPv6 sur interface physique","Applique une adresse IPv4 à l'interface virtuelle","Applique une adresse IPv6 à l'interface virtuelle"],ans:[0],
+       explain:"<code>mdix auto</code> active la <strong>détection automatique MDI/MDIX</strong> pour câbles directs ou croisés."}
+    ]
+  },
+  {
+    id:'m56',
+    tag:'CHECKPOINT',
+    tagClass:'tag-cp',
+    title:'Modules 5–6 : Réseaux Redondants (STP & EtherChannel)',
+    short:'Mods 5–6',
+    questions:[
+      {q:"Quelle est la première étape du processus de sélection du pont racine dans STP ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-27_120527.jpg",
+        imgCap:"Topologie STP — 4 commutateurs, élection du pont racine",
+        imgFallback:"Montre 4 commutateurs S1, S2, S3, S4 interconnectés avec leurs priorités STP (toutes 32768) et adresses MAC. La première étape de sélection du pont racine est de comparer les priorités de pont — le commutateur avec la priorité la plus basse (ou la MAC la plus basse si égalité) devient le pont racine.",
+       opts:["Sélectionner le port désigné sur chaque segment","Élire le pont avec le BID le plus bas","Bloquer tous les ports redondants","Attribuer des coûts de chemin"],ans:[1],
+       explain:"STP élit d'abord le <strong>pont racine</strong> : le commutateur avec le <strong>BID (Bridge ID) le plus bas</strong>. Le BID = priorité + MAC."},
+      {q:"Dans STP, quel port est sélectionné sur chaque segment non-racine pour transmettre le trafic vers le pont racine ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-27_120742.jpg",
+        imgCap:"show spanning-tree — rôles des ports (root, designated, alternate)",
+        imgFallback:"Sortie de 'show spanning-tree' affichant les rôles des ports : Root (Racine=vers pont racine), Desg (Designated=meilleur port du segment), Altn (Alternate=port bloqué). Sur chaque segment non-racine, le port désigné est celui qui transmet le trafic vers le pont racine.",
+       opts:["Port racine","Port désigné","Port alternatif","Port bloqué"],ans:[1],
+       explain:"Le <strong>port désigné</strong> est l'unique port par segment qui transmet le trafic. Les autres ports non-racine sont bloqués."},
+      {q:"Quel protocole STP améliore le temps de convergence en permettant aux ports de passer directement à l'état de transfert ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-27_121112.jpg",
+        imgCap:"Topologie RSTP — ports racine, désigné, alternatif, edge",
+        imgFallback:"Montre une topologie RSTP avec les différents rôles de ports : Edge (PortFast), Root, Designated, Alternate. RSTP (Rapid STP) améliore la convergence en permettant aux ports de passer directement à l'état forwarding sans attendre les timers STP classiques.",
+       opts:["STP (802.1D)","RSTP (802.1w)","PVST+","MST"],ans:[1],
+       explain:"<strong>RSTP (802.1w)</strong> — Rapid Spanning Tree Protocol — améliore la convergence STP (de ~50 s à < 6 s) grâce à des mécanismes de négociation rapide."},
+      {q:"Quelle commande Cisco configure PortFast sur une interface de commutateur ?",
+       opts:["spanning-tree portfast","spanning-tree mode rapid-pvst","spanning-tree guard root","spanning-tree bpduguard enable"],ans:[0],
+       explain:"<code>spanning-tree portfast</code> configure le port pour passer directement à l'état Forwarding, sans traverser les états STP (idéal pour les hôtes)."},
+      {q:"Quelle fonctionnalité protège contre une topologie incorrecte si des BPDU sont reçus sur un port PortFast ?",
+       opts:["PortFast","BPDU Guard","Root Guard","Loop Guard"],ans:[1],
+       explain:"<strong>BPDU Guard</strong> désactive automatiquement un port PortFast s'il reçoit un BPDU, protégeant la topologie STP."},
+      {q:"Quel est l'avantage d'EtherChannel par rapport aux liaisons agrégées multiples séparées ?",
+       opts:["Augmente le nombre de domaines de collision","Regroupe plusieurs liaisons en une seule liaison logique","Élimine le besoin de STP","Améliore la sécurité du réseau"],ans:[1],
+       explain:"<strong>EtherChannel</strong> regroupe 2 à 8 liaisons physiques en une seule liaison logique, augmentant la bande passante totale sans blocage STP."},
+      {q:"Quel protocole négocie EtherChannel automatiquement et est propriétaire de Cisco ?",
+       opts:["LACP","PAgP","DTP","STP"],ans:[1],
+       explain:"<strong>PAgP</strong> (Port Aggregation Protocol) est le protocole propriétaire Cisco pour négocier EtherChannel. LACP est la version standard IEEE."},
+      {q:"Quelle commande vérifie le résumé EtherChannel sur un commutateur Cisco ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-27_121604.jpg",
+        imgCap:"show etherchannel summary — résumé des groupes EtherChannel",
+        imgFallback:"Sortie de 'show etherchannel summary' affichant les groupes EtherChannel (numéro, port-channel, protocole PAgP/LACP, état des interfaces et flags). Cette commande donne une vue d'ensemble de tous les canaux configurés sur le commutateur.",
+       opts:["show etherchannel summary","show interfaces trunk","show spanning-tree","show port-channel"],ans:[0],
+       explain:"<code>show etherchannel summary</code> affiche l'état des EtherChannels configurés et leurs interfaces membres."},
+      {q:"Quels deux modes PAgP permettent de former un EtherChannel ? (DEUX réponses)",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-27_121214.jpg",
+        imgCap:"Tableau négociation PAgP — combinaisons de modes valides",
+        imgFallback:"Tableau PAgP : desirable+desirable=✓ EtherChannel, desirable+auto=✓ EtherChannel, auto+auto=✗ Pas d'EtherChannel (auto attend mais n'initie pas). Les modes 'desirable' et 'auto' forment un EtherChannel avec PAgP.",
+       opts:["Active","Desirable","Passive","On","Auto"],ans:[1,4],multi:true,
+       explain:"En PAgP : <strong>desirable</strong> (initie activement) + <strong>auto</strong> (attend passivement). Au moins un côté doit être 'desirable'."},
+      {q:"Quels deux modes LACP permettent de former un EtherChannel IEEE ? (DEUX réponses)",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-27_121308.jpg",
+        imgCap:"Tableau négociation LACP — combinaisons de modes valides",
+        imgFallback:"Tableau LACP : active+active=✓ EtherChannel, active+passive=✓ EtherChannel, passive+passive=✗ Pas d'EtherChannel (passive attend mais n'initie pas). Les modes 'active' et 'passive' forment un EtherChannel avec LACP (IEEE 802.3ad).",
+       opts:["Active","Desirable","Passive","On","Auto"],ans:[0,2],multi:true,
+       explain:"En LACP : <strong>active</strong> (initie) + <strong>passive</strong> (répond). Au moins un côté doit être 'active'."},
+      {q:"Quelle est la valeur par défaut de la priorité de pont STP sur un commutateur Cisco ?",
+       opts:["0","4096","32768","65535"],ans:[2],
+       explain:"La priorité de pont par défaut est <strong>32768</strong>. Pour devenir pont racine, configurer une priorité plus basse."},
+      {q:"Quelle commande configure un commutateur pour devenir le pont racine principal ?",
+       opts:["spanning-tree vlan 1 root primary","spanning-tree vlan 1 priority 0","spanning-tree mode rapid-pvst","spanning-tree guard root"],ans:[0],
+       explain:"<code>spanning-tree vlan 1 root primary</code> configure automatiquement le commutateur avec la priorité la plus basse pour devenir pont racine."},
+      {q:"Dans quel état STP un port peut-il apprendre les adresses MAC mais ne pas transmettre de données ?",
+       opts:["Blocking","Listening","Learning","Forwarding"],ans:[2],
+       explain:"L'état <strong>Learning</strong> permet d'apprendre les adresses MAC (remplissage de la table CAM) sans transmettre de trafic utilisateur."},
+      {q:"Quelle fonctionnalité STP empêche un port de devenir port désigné si un BPDU supérieur est reçu ?",
+       opts:["PortFast","BPDU Guard","Root Guard","Loop Guard"],ans:[2],
+       explain:"<strong>Root Guard</strong> empêche un port de devenir port racine si un BPDU supérieur est reçu, protégeant la position du pont racine."},
+      {q:"Quelle technologie de redondance de couche 2 agrège des liaisons parallèles entre commutateurs ?",
+       opts:["STP","RSTP","EtherChannel","HSRP"],ans:[2],
+       explain:"<strong>EtherChannel</strong> agrège des liaisons parallèles en une liaison logique unique pour la redondance et l'augmentation de bande passante."}
+    ]
+  },
+  {
+    id:'m79',
+    tag:'CHECKPOINT',
+    tagClass:'tag-cp',
+    title:'Modules 7–9 : Réseaux disponibles (DHCP, FHRP)',
+    short:'Mods 7–9',
+    questions:[
+      {q:"Quelle commande exclut des adresses IP du pool DHCPv4 sur un routeur ?",
+       opts:["ip dhcp excluded-address","ip dhcp pool exclude","no ip dhcp pool","ip dhcp conflict"],ans:[0],
+       explain:"<code>ip dhcp excluded-address x.x.x.x y.y.y.y</code> exclut une plage d'adresses du pool DHCP (pour passerelles, serveurs, etc.)."},
+      {q:"Quel message DHCP un client envoie-t-il en broadcast pour localiser un serveur DHCP disponible ?",
+       opts:["DHCPACK","DHCPOFFER","DHCPDISCOVER","DHCPREQUEST"],ans:[2],
+       explain:"Le processus DORA : <strong>DHCPDISCOVER</strong> (client→broadcast) → DHCPOFFER → DHCPREQUEST → DHCPACK."},
+      {q:"Quel est le rôle d'un agent de relais DHCP (ip helper-address) ?",
+       opts:["Assigner des adresses IP statiques","Transférer les broadcasts DHCP vers un serveur DHCP distant","Bloquer les requêtes DHCP non autorisées","Gérer les conflits d'adresses DHCP"],ans:[1],
+       explain:"<code>ip helper-address</code> transforme les broadcasts DHCP en unicast et les transfère vers un <strong>serveur DHCP sur un autre sous-réseau</strong>."},
+      {q:"Quelle commande vérifie les liaisons DHCP actuelles sur un routeur Cisco ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-27_211435.jpg",
+        imgCap:"show ip dhcp binding — liaisons DHCP actives (IP, MAC, durée)",
+        imgFallback:"Sortie de 'show ip dhcp binding' affichant les adresses IP allouées avec l'adresse MAC client, le type de liaison et la date d'expiration du bail DHCP.",
+       opts:["show ip dhcp binding","show ip dhcp pool","show ip dhcp server statistics","show ip dhcp conflict"],ans:[0],
+       explain:"<code>show ip dhcp binding</code> affiche toutes les <strong>attributions d'adresses IP actives</strong> avec les MACs correspondantes."},
+      {q:"Quelle commande configure l'adresse de la passerelle par défaut dans un pool DHCPv4 ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-27_213014.jpg",
+        imgCap:"Configuration pool DHCPv4 — commande default-router",
+        imgFallback:"CLI Cisco IOS montrant la configuration d'un pool DHCP avec 'ip dhcp pool LAN', 'network', 'default-router' et 'dns-server'. La commande 'default-router' définit l'adresse de la passerelle par défaut envoyée aux clients.",
+       opts:["network","default-router","dns-server","lease"],ans:[1],
+       explain:"<code>default-router x.x.x.x</code> dans le pool DHCP configure l'<strong>adresse de la passerelle par défaut</strong> envoyée aux clients."},
+      {q:"Quel processus IPv6 permet à un hôte de s'auto-configurer sans serveur DHCPv6 ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-27_213426.jpg",
+        imgCap:"SLAAC — auto-configuration IPv6 sans serveur DHCPv6",
+        imgFallback:"Montre le processus SLAAC : l'hôte envoie un RS (Router Solicitation), le routeur répond avec un RA (Router Advertisement) contenant le préfixe réseau. L'hôte combine le préfixe avec son identifiant d'interface EUI-64 pour former son adresse IPv6.",
+       opts:["DHCP stateful","SLAAC","DHCPv6 sans état","Adressage statique"],ans:[1],
+       explain:"<strong>SLAAC</strong> (Stateless Address AutoConfiguration) permet à un hôte IPv6 de dériver son adresse depuis les annonces du routeur (RA)."},
+      {q:"Quel message ICMPv6 un routeur envoie-t-il périodiquement pour annoncer sa présence aux hôtes IPv6 ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-27_220213.jpg",
+        imgCap:"Message RA ICMPv6 — annonce de présence du routeur aux hôtes IPv6",
+        imgFallback:"Montre un routeur envoyant un message Router Advertisement (RA, ICMPv6 type 134) en multicast vers FF02::1. Ce message contient le préfixe réseau, la durée de vie et les options de configuration (M/O flags) pour les hôtes IPv6.",
+       opts:["Neighbor Solicitation","Router Solicitation","Router Advertisement","Neighbor Advertisement"],ans:[2],
+       explain:"Le <strong>Router Advertisement (RA)</strong> est envoyé périodiquement par les routeurs IPv6 pour annoncer les préfixes réseau aux hôtes."},
+      {q:"Quel protocole FHRP est un standard ouvert IEEE permettant la redondance de la passerelle par défaut ?",
+       opts:["HSRP","VRRP","GLBP","IRDP"],ans:[1],
+       explain:"<strong>VRRP</strong> (Virtual Router Redundancy Protocol) est le standard ouvert IEEE 5798 pour la redondance de passerelle. HSRP est propriétaire Cisco."},
+      {q:"Dans HSRP, quel routeur répond aux paquets ARP pour l'adresse IP virtuelle ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-27_214135.jpg",
+        imgCap:"Topologie HSRP — routeur actif répond aux ARP pour l'IP virtuelle",
+        imgFallback:"Montre deux routeurs R1 (actif, priorité 110) et R2 (standby, priorité 100) configurés en HSRP avec une IP virtuelle partagée 192.168.1.254. R1 est le routeur actif car il a la priorité la plus haute et répond aux requêtes ARP pour l'IP virtuelle.",
+       opts:["Le routeur actif","Le routeur standby","Les deux routeurs","Le routeur avec la priorité la plus basse"],ans:[0],
+       explain:"Dans HSRP, le <strong>routeur actif</strong> traite tout le trafic vers l'IP virtuelle. Le routeur standby prend le relais si l'actif tombe."},
+      {q:"Quelle commande configure la priorité HSRP sur un routeur ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-27_214339.jpg",
+        imgCap:"CLI HSRP — commande standby priority",
+        imgFallback:"Configuration HSRP sur un routeur Cisco : 'interface GigabitEthernet0/0', 'standby 1 ip 192.168.1.254', 'standby 1 priority 110', 'standby 1 preempt'. La commande 'standby [group] priority [value]' configure la priorité HSRP (valeur par défaut : 100).",
+       opts:["standby 1 priority 110","hsrp priority 110","standby 1 preempt","ip hsrp priority 110"],ans:[0],
+       explain:"<code>standby [groupe] priority [valeur]</code> configure la priorité HSRP. Par défaut = 100. La valeur la plus haute devient le routeur actif."},
+      {q:"Quelle caractéristique de DHCPv6 sans état permet aux hôtes d'obtenir des informations supplémentaires ?",
+       opts:["Les hôtes s'auto-configurent via SLAAC uniquement","Le routeur fournit toutes les informations","SLAAC fournit l'adresse, DHCPv6 fournit DNS et autres infos","Le serveur DHCPv6 assigne l'adresse complète"],ans:[2],
+       explain:"En DHCPv6 <strong>sans état</strong> : SLAAC génère l'adresse IPv6 + <strong>DHCPv6 fournit</strong> les informations supplémentaires (DNS, etc.)."},
+      {q:"Quel message un client DHCPv6 envoie-t-il pour localiser un serveur DHCPv6 ?",
+       opts:["SOLICIT","ADVERTISE","REQUEST","REPLY"],ans:[0],
+       explain:"Le processus DHCPv6 : <strong>SOLICIT</strong> (client→multicast) → ADVERTISE → REQUEST → REPLY."},
+      {q:"Quelle commande active le suivi DHCP (DHCP Snooping) sur un VLAN donné ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-27_214544.jpg",
+        imgCap:"CLI DHCP Snooping — activation par VLAN",
+        imgFallback:"Configuration DHCP Snooping : 'ip dhcp snooping' (activation globale) puis 'ip dhcp snooping vlan 10,20' (activation par VLAN). Les ports uplinks vers des serveurs DHCP légitimes sont configurés comme 'trusted' avec 'ip dhcp snooping trust'.",
+       opts:["ip dhcp snooping vlan","ip dhcp snooping trust","ip dhcp snooping limit rate","ip dhcp snooping binding"],ans:[0],
+       explain:"<code>ip dhcp snooping vlan [id]</code> active le filtrage des messages DHCP sur un VLAN, protégeant contre les serveurs DHCP non autorisés."},
+      {q:"Quelle est la différence entre HSRP version 1 et version 2 ?",
+       opts:["HSRPv2 supporte IPv6","HSRPv2 utilise une plage de groupes plus large (0-4095 vs 0-255)","HSRPv2 utilise une priorité différente","Les deux sont identiques"],ans:[1],
+       explain:"HSRPv2 supporte une <strong>plage de groupes 0-4095</strong> (vs 0-255 pour v1) et utilise des adresses multicast différentes."}
+    ]
+  },
+  {
+    id:'m1013',
+    tag:'CHECKPOINT',
+    tagClass:'tag-cp',
+    title:'Modules 10–13 : Sécurité L2 & WLAN',
+    short:'Mods 10–13',
+    questions:[
+      {q:"Quel type d'attaque consiste à envoyer de nombreux messages DHCP DISCOVER pour épuiser le pool DHCP ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-29_190027.jpg",
+        imgCap:"Attaque DHCP Starvation — inondation de DISCOVER pour épuiser le pool",
+        imgFallback:"Montre une attaque DHCP Starvation : un attaquant envoie massivement des messages DHCP DISCOVER avec de fausses adresses MAC pour épuiser tous les baux disponibles du serveur DHCP. Les clients légitimes ne peuvent plus obtenir d'adresse IP.",
+       opts:["DHCP Starvation","DHCP Spoofing","ARP Spoofing","MAC Flooding"],ans:[0],
+       explain:"La <strong>DHCP Starvation</strong> inonde le réseau de requêtes DHCP pour épuiser les adresses disponibles, provoquant un déni de service."},
+      {q:"Quelle fonctionnalité de sécurité limite le nombre d'adresses MAC sur un port de commutateur ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-29_190501.jpg",
+        imgCap:"Port Security — limitation du nombre d'adresses MAC sur un port",
+        imgFallback:"Montre la configuration Port Security sur un commutateur : 'switchport port-security maximum 2' limite à 2 adresses MAC sur ce port. Si une 3e adresse tente d'accéder, le mode de violation s'applique (shutdown par défaut).",
+       opts:["DHCP Snooping","Port Security","ARP Inspection","802.1X"],ans:[1],
+       explain:"<strong>Port Security</strong> limite le nombre de MAC autorisées sur un port et peut désactiver le port en cas de violation."},
+      {q:"Quelle commande configure la limite maximale d'adresses MAC sur un port en mode Port Security ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-29_190640.jpg",
+        imgCap:"show port-security interface — config maximale adresses MAC",
+        imgFallback:"Sortie de 'show port-security interface Fa0/1' affichant : Maximum MAC Addresses=1, Current MAC Addresses=1, Violation Mode=Shutdown. La commande 'switchport port-security maximum [n]' configure la limite.",
+       opts:["switchport port-security maximum 3","switchport port-security mac-address sticky","switchport port-security violation shutdown","switchport port-security"],ans:[0],
+       explain:"<code>switchport port-security maximum [nombre]</code> limite le nombre d'adresses MAC autorisées sur un port."},
+      {q:"Quelle mode de violation Port Security envoie un message syslog mais ne désactive pas le port ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-29_191655.jpg",
+        imgCap:"Mode violation Port Security Restrict — log syslog, port reste actif",
+        imgFallback:"Tableau comparatif des modes de violation Port Security : Protect (bloque trafic, pas de log, port actif), Restrict (bloque trafic, log syslog, port actif ✓), Shutdown (bloque trafic, log syslog, port désactivé err-disable).",
+       opts:["Shutdown","Restrict","Protect","Disable"],ans:[1],
+       explain:"Le mode <strong>Restrict</strong> rejette les trames non autorisées et envoie un message syslog. Le mode Protect ne fait que rejeter silencieusement."},
+      {q:"Quelle attaque exploite l'inondation de la table CAM d'un commutateur ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-29_192806.jpg",
+        imgCap:"Attaque MAC Flooding — inondation table CAM du commutateur",
+        imgFallback:"Montre une attaque MAC Address Table Flooding : l'attaquant inonde le commutateur avec des milliers de trames ayant des adresses MAC sources aléatoires, saturant la table CAM. Le commutateur passe en mode 'hub' et diffuse tout le trafic sur tous les ports.",
+       opts:["DHCP Starvation","MAC Flooding","VLAN Hopping","STP Manipulation"],ans:[1],
+       explain:"Le <strong>MAC Flooding</strong> inonde la table CAM avec de fausses MAC, forçant le commutateur à agir comme un hub et exposant le trafic."},
+      {q:"Quelle attaque permet à un attaquant d'accéder à des VLANs non autorisés en exploitant le protocole DTP ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-07-01_233518.jpg",
+        imgCap:"WLAN — topologie BSS avec AP et clients WiFi",
+        imgFallback:"Montre une topologie WLAN (BSS - Basic Service Set) avec un Access Point central auquel se connectent plusieurs clients sans fil. L'AP est connecté à l'infrastructure filaire via un port trunk, permettant la communication entre réseaux WiFi et câblé.",
+       opts:["DHCP Starvation","MAC Flooding","VLAN Hopping","ARP Spoofing"],ans:[2],
+       explain:"Le <strong>VLAN Hopping</strong> utilise DTP ou double-étiquetage pour accéder à des VLANs auxquels l'attaquant n'est pas censé avoir accès."},
+      {q:"Quelle fonctionnalité surveille les messages ARP et rejette les réponses ARP non valides ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-29_235206.jpg",
+        imgCap:"DAI — Dynamic ARP Inspection, validation des réponses ARP",
+        imgFallback:"Montre le fonctionnement de DAI (Dynamic ARP Inspection) : valide les messages ARP par rapport à la table DHCP Snooping. Les ports 'untrusted' (vers les clients) ne peuvent pas envoyer de réponses ARP non vérifiées. Prévient les attaques ARP Poisoning.",
+       opts:["DHCP Snooping","Port Security","Dynamic ARP Inspection (DAI)","802.1X"],ans:[2],
+       explain:"<strong>DAI</strong> (Dynamic ARP Inspection) valide les réponses ARP en les comparant avec la table de liaison DHCP Snooping."},
+      {q:"Quel standard sans fil offre des vitesses allant jusqu'à 54 Mbps sur la bande 5 GHz ?",
+       opts:["802.11b","802.11g","802.11a","802.11n"],ans:[2],
+       explain:"<strong>802.11a</strong> opère sur la bande <strong>5 GHz</strong> avec des débits allant jusqu'à 54 Mbps."},
+      {q:"Quel standard sans fil offre les débits les plus élevés en utilisant MIMO sur les bandes 2.4 et 5 GHz ?",
+       opts:["802.11a","802.11b","802.11g","802.11n"],ans:[3],
+       explain:"<strong>802.11n</strong> utilise MIMO (Multiple-Input Multiple-Output) sur 2.4 et 5 GHz pour des débits théoriques jusqu'à 600 Mbps."},
+      {q:"Quel protocole de sécurité WiFi utilise AES comme algorithme de chiffrement ?",
+       opts:["WEP","WPA","WPA2","WPA3"],ans:[2],
+       explain:"<strong>WPA2</strong> utilise AES (Advanced Encryption Standard) avec CCMP, offrant un niveau de sécurité fort."},
+      {q:"Quelle est la différence entre un mode BSS et un mode ESS dans un réseau WiFi ?",
+       opts:["BSS utilise plusieurs AP, ESS utilise un seul AP","BSS utilise un seul AP, ESS combine plusieurs AP pour une couverture étendue","BSS est pour le WiFi 5 GHz, ESS pour 2.4 GHz","Aucune différence"],ans:[1],
+       explain:"<strong>BSS</strong> (Basic Service Set) = un seul AP. <strong>ESS</strong> (Extended Service Set) = plusieurs AP connectés pour une couverture étendue."},
+      {q:"Quel composant d'un WLC gère l'authentification et l'autorisation des clients sans fil ?",
+       opts:["RADIUS","DHCP Server","SNMP","AP Controller"],ans:[0],
+       explain:"Un serveur <strong>RADIUS</strong> gère l'authentification 802.1X dans un réseau WiFi d'entreprise via le WLC."},
+      {q:"Quelle méthode de chiffrement est considérée comme la plus sûre pour WPA3 ?",
+       opts:["WEP","TKIP","AES-GCMP-256","AES-CCMP"],ans:[2],
+       explain:"<strong>WPA3</strong> utilise <strong>AES-GCMP-256</strong> pour le chiffrement, offrant le niveau de sécurité le plus élevé actuellement disponible."},
+      {q:"Quelle commande sur un commutateur configure un port en tant que port de confiance pour DHCP Snooping ?",
+       opts:["ip dhcp snooping trust","switchport dhcp-snooping trust","ip dhcp snooping limit rate","ip dhcp trust"],ans:[0],
+       explain:"<code>ip dhcp snooping trust</code> sur un port permet au trafic DHCP provenant d'un serveur/routeur de confiance de passer."}
+    ]
+  },
+  {
+    id:'m1416',
+    tag:'CHECKPOINT',
+    tagClass:'tag-cp',
+    title:'Modules 14–16 : Concepts de Routage',
+    short:'Mods 14–16',
+    questions:[
+      {q:"PC A envoie une requête au serveur B. Quelle adresse IPv4 est dans le champ destination du paquet sortant de PC A ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-30_182525.jpg",
+        imgCap:"Topologie routage — PC A vers serveur B, adresse destination dans paquet IP",
+        imgFallback:"Montre PC A envoyant une requête au serveur B via plusieurs routeurs. Dans le paquet IP, l'adresse de destination reste TOUJOURS l'IP du serveur B (192.168.1.x). Seules les adresses MAC source/destination changent à chaque saut (encapsulation L2).",
+       opts:["192.168.10.1","192.168.10.10","192.168.11.1","192.168.12.16"],ans:[3],
+       explain:"L'adresse IP de destination <strong>ne change jamais</strong> en transit. Elle pointe toujours vers la destination finale (Serveur B = 192.168.12.16)."},
+      {q:"Quels sont les deux avantages du routage statique sur le routage dynamique ? (DEUX réponses)",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-30_182910.jpg",
+        imgCap:"Avantages routage statique — topologie simple, overhead minimal",
+        imgFallback:"Tableau comparatif routage statique vs dynamique : Statique = overhead minimal, sécurité accrue, adapté aux petits réseaux. Dynamique = scalabilité, convergence automatique, adapté aux grands réseaux. Le routage statique ne consomme pas de CPU/bande passante pour les mises à jour.",
+       opts:["Se met à l'échelle facilement","Utilise moins de ressources du routeur","Facile pour grands réseaux","Connaissance minime requise","Plus sûr car pas d'annonces réseau"],ans:[1,4],multi:true,
+       explain:"Routage statique = <strong>moins de ressources</strong> CPU/mémoire + <strong>plus sécurisé</strong> (pas d'annonces réseau)."},
+      {q:"Dans quel cas préférer le routage dynamique ?",
+       opts:["Réseau avec problèmes de performances","Petit réseau stable","Réseau stub point de sortie unique","Réseau avec nombreuses modifications de topologie"],ans:[3],
+       explain:"Le routage dynamique est optimal quand la <strong>topologie change fréquemment</strong>."},
+      {q:"Quelle est la distance administrative de RIP ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-30_183122.jpg",
+        imgCap:"Distance administrative RIP — valeur 120",
+        imgFallback:"Tableau des distances administratives Cisco : Directement connecté=0, Statique=1, EIGRP=90, OSPF=110, RIP=120, Inconnu=255. Plus la DA est faible, plus la route est préférée. RIP a une DA de 120.",
+       opts:["90","110","120","1"],ans:[2],
+       explain:"RIP a une DA de <strong>120</strong>. EIGRP=90, OSPF=110, Statique=1, Connecté=0."},
+      {q:"Un réseau 172.16.32.0/19 appris via OSPF (DA=110). Quelle commande crée une route flottante de secours ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-30_183422.jpg",
+        imgCap:"Route flottante OSPF — route statique avec DA > 110",
+        imgFallback:"Montre la création d'une route statique flottante (backup) pour un réseau appris via OSPF (DA=110). La commande 'ip route 172.16.32.0 255.255.224.0 [nexthop] 115' crée une route avec DA=115 > 110 d'OSPF, donc utilisée uniquement si la route OSPF disparaît.",
+       opts:["ip route 172.16.0.0 255.255.224.0 S0/0/0 100","ip route 172.16.32.0 255.255.224.0 S0/0/0 200","ip route 172.16.32.0 255.255.0.0 S0/0/0 100","ip route 172.16.0.0 255.255.240.0 S0/0/0 200"],ans:[1],
+       explain:"OSPF DA=110 → flottante DA > 110. Réseau <strong>172.16.32.0/255.255.224.0</strong> + DA=<strong>200</strong>."},
+      {q:"Quelle combinaison préfixe/longueur crée une route statique par défaut IPv6 ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-30_184545.jpg",
+        imgCap:"OSPF show ip route — réseau R2 appris via OSPF",
+        imgFallback:"Sortie de 'show ip route' montrant les routes OSPF (marquées 'O') avec leur coût de chemin. La distance administrative OSPF est 110 (indiquée entre crochets [110/cost]).",
+       opts:["::/0","::1/64","FFFF::/128","::/128"],ans:[0],
+       explain:"<strong>::/0</strong> est la route par défaut IPv6, équivalent de 0.0.0.0/0 en IPv4."},
+      {q:"Caractéristique d'une route statique flottante ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-30_184851.jpg",
+        imgCap:"Route IPv6 statique entièrement spécifiée — next-hop + interface",
+        imgFallback:"CLI montrant la configuration d'une route statique IPv6 entièrement spécifiée : 'ipv6 route 2001:db8:1::/64 GigabitEthernet0/0 FE80::2'. Une route entièrement spécifiée inclut à la fois l'interface de sortie ET l'adresse next-hop.",
+       opts:["Crée une passerelle de dernier recours","Équilibrage de charge","Route statique avec 0.0.0.0/0","DA supérieure à celle du protocole de routage original"],ans:[3],
+       explain:"La route flottante a une <strong>DA supérieure</strong> à la route principale — elle n'est active que si la principale tombe."},
+      {q:"Qu'arrive-t-il à une route statique quand son interface de sortie est mise hors service ?",
+       opts:["Supprimée de la table","Reste dans la table","Redirigée automatiquement","Routeur sonde les voisins"],ans:[0],
+       explain:"La route statique est <strong>supprimée</strong> de la table quand son interface de sortie tombe."},
+      {q:"Quelle valeur représente la fiabilité et détermine la route installée quand plusieurs routes existent vers la même destination ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2022/06/2022-06-30_185033.jpg",
+        imgCap:"Commutateur multicouche L3 — routage inter-VLAN avec SVI",
+        imgFallback:"Montre un commutateur multicouche (L3) configuré avec des SVI (Switched Virtual Interfaces) pour le routage inter-VLAN. Contrairement au router-on-a-stick, le commutateur L3 effectue le routage en interne, sans routeur externe ni liaison trunk dédiée.",
+       opts:["Protocole de routage","Métrique","Distance administrative","Interface de sortie"],ans:[2],
+       explain:"La <strong>distance administrative (DA)</strong> indique la fiabilité. Plus la DA est basse, plus la route est préférée."},
+      {q:"Avant de configurer une route statique IPv6, il faut d'abord configurer…",
+       opts:["ipv6 unicast-routing","Adresse saut suivant de routeurs adjacents","Adresse lien-local sur routeur adjacent","Distance administrative de 2"],ans:[0],
+       explain:"<code>ipv6 unicast-routing</code> doit être activé globalement pour que le routeur route les paquets IPv6."},
+      {q:"Quelle route a la distance administrative la plus courte ?",
+       opts:["Réseau connecté directement (DA=0)","Route via OSPF (DA=110)","Route statique (DA=1)","Route via EIGRP (DA=90)"],ans:[0],
+       explain:"DA : Connectée=<strong>0</strong>, Statique=1, EIGRP=90, OSPF=110, RIP=120."},
+      {q:"Que signifie le '5' dans 'ip route 192.168.10.0 255.255.255.0 10.10.10.2 5' ?",
+       opts:["Nombre de sauts max","Interface de sortie","Métrique","Distance administrative"],ans:[3],
+       explain:"Le dernier paramètre numérique d'une commande <code>ip route</code> est la <strong>distance administrative</strong>."}
+    ]
+  },
+  {
+    id:'examenblanc',
+    tag:'EXAM BLANC',
+    tagClass:'tag-pf',
+    title:'SRWEv7 – Examen Blanc Final',
+    short:'Exam Blanc',
+    questions:[
+      {q:"Quels sont les deux énoncés qui décrivent les caractéristiques d'un réseau local virtuel (VLAN) ? (DEUX réponses)",
+       opts:["Tous les ports de commutateur font automatiquement partie du VLAN natif","Les périphériques d'un VLAN sont logiquement regroupés","Les VLANs nécessitent un routeur ou commutateur L3 pour communiquer entre eux","Les VLANs nécessitent un switch dédié par VLAN","Les VLANs partagent le même domaine de diffusion"],ans:[1,2],multi:true,
+       explain:"Les <strong>VLANs groupent logiquement des périphériques</strong> et nécessitent un <strong>routeur ou switch L3</strong> pour la communication inter-VLAN."},
+      {q:"Quel mode de commutation est le plus approprié pour les environnements nécessitant une qualité de service et une faible perte de trame ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2024/11/ai239153n1v1.png",
+        imgCap:"Examen blanc — topologie réseau principale",
+        imgFallback:"Topologie de référence de l'examen blanc SRWE v7.02 montrant les commutateurs, routeurs, VLANs et connexions. Cette topologie est utilisée pour plusieurs questions de l'examen.",
+       opts:["Cut-through","Fragment-free","Store-and-forward","Fast-forward"],ans:[2],
+       explain:"<strong>Store-and-forward</strong> vérifie l'intégrité FCS avant transmission — idéal pour QoS car aucune trame corrompue n'est transmise."},
+      {q:"Quelle est la distance administrative d'OSPF ?",
+       opts:["90","100","110","120"],ans:[2],
+       explain:"OSPF a une distance administrative de <strong>110</strong>."},
+      {q:"Quel protocole permet à plusieurs routeurs de partager une IP virtuelle pour la redondance de passerelle ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2024/11/ai239027n1v1.png",
+        imgCap:"HSRP/VRRP — configuration protocole de redondance passerelle",
+        imgFallback:"Montre la configuration d'un protocole FHRP (HSRP/VRRP/GLBP) sur deux routeurs partageant une IP virtuelle. Le protocole permet à plusieurs routeurs de partager une IP virtuelle commune servant de passerelle par défaut aux hôtes.",
+       opts:["STP","EtherChannel","HSRP","DHCP"],ans:[2],
+       explain:"<strong>HSRP</strong> (Hot Standby Router Protocol) permet à plusieurs routeurs de partager une IP virtuelle, assurant la redondance."},
+      {q:"Quelle commande vérifie l'état des VLANs et leurs associations de ports sur un commutateur ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2024/11/ai239028n1v1.png",
+        imgCap:"show vlan brief — état des VLANs et ports associés",
+        imgFallback:"Sortie de 'show vlan brief' sur un commutateur Cisco affichant les VLANs (ID, nom, état) et les ports qui leur sont associés. Cette commande permet de vérifier l'affectation des ports aux VLANs.",
+       opts:["show vlan brief","show interfaces trunk","show running-config","show mac-address-table"],ans:[0],
+       explain:"<code>show vlan brief</code> affiche les <strong>VLANs et leurs ports associés</strong> sur le commutateur."},
+      {q:"Quel type de message DHCP un serveur envoie-t-il pour confirmer l'attribution d'une adresse IP ?",
+       opts:["DHCPDISCOVER","DHCPOFFER","DHCPREQUEST","DHCPACK"],ans:[3],
+       explain:"<strong>DHCPACK</strong> est le message final du serveur confirmant l'attribution de l'adresse IP au client."},
+      {q:"Quelle est la taille maximale d'une trame Ethernet standard ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2024/11/12i300477n1v2.png",
+        imgCap:"Topologie routage statique — routes configurées sur R1",
+        imgFallback:"Topologie réseau pour les questions de routage statique de l'examen blanc. Montre les réseaux connectés aux routeurs et les routes statiques à configurer pour assurer la connectivité complète.",
+       opts:["64 octets","1518 octets","9000 octets","1500 octets"],ans:[1],
+       explain:"La taille maximale d'une trame Ethernet standard est de <strong>1518 octets</strong> (avec l'en-tête 802.1Q)."},
+      {q:"Quelle commande configure une route statique IPv6 par défaut sur un routeur ?",
+       opts:["ipv6 route ::/0 G0/0","ipv6 route 0.0.0.0/0 G0/0","ip route ::/0 G0/0","ipv6 default-route G0/0"],ans:[0],
+       explain:"<code>ipv6 route ::/0</code> configure la route par défaut IPv6 (équivalent de 0.0.0.0/0 en IPv4)."},
+      {q:"Quel protocole sans fil offre la meilleure sécurité actuelle pour les réseaux WiFi d'entreprise ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2024/11/ai300565n1v2.jpg",
+        imgCap:"Configuration WLAN — WPA2 Enterprise sur AP Cisco",
+        imgFallback:"Interface de configuration d'un point d'accès WiFi Cisco montrant les paramètres de sécurité WPA2 Enterprise : serveur RADIUS, méthode d'authentification EAP, et paramètres de chiffrement AES.",
+       opts:["WEP","WPA","WPA2","WPA3"],ans:[3],
+       explain:"<strong>WPA3</strong> est le protocole de sécurité WiFi le plus récent et le plus sécurisé, avec AES-GCMP-256 et SAE."},
+      {q:"Quelle fonctionnalité STP permet aux ports connectés aux hôtes finaux de passer immédiatement en état Forwarding ?",
+       opts:["Root Guard","BPDU Guard","PortFast","Loop Guard"],ans:[2],
+       explain:"<strong>PortFast</strong> permet aux ports d'accès (hôtes finaux) de passer directement à l'état Forwarding sans attendre STP."},
+      {q:"Quelle commande affiche toutes les interfaces trunk sur un commutateur Cisco ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2024/11/2024-11-24_172145.jpg",
+        imgCap:"show ip route — table de routage avec routes OSPF et statiques",
+        imgFallback:"Sortie de 'show ip route' affichant la table de routage complète avec différents types de routes : C (connecté), S (statique), O (OSPF), R (RIP). Inclut les distances administratives et métriques entre crochets.",
+       opts:["show vlan brief","show interfaces trunk","show running-config","show interfaces switchport"],ans:[1],
+       explain:"<code>show interfaces trunk</code> affiche toutes les <strong>interfaces configurées en mode trunk</strong> avec leurs VLANs autorisés."},
+      {q:"Quel est l'impact de l'exécution de la commande 'no ip routing' sur un commutateur multicouche ?",
+       opts:["Active le routage IPv6","Désactive le routage IP au niveau du commutateur","Supprime toutes les routes statiques","Active le mode de commutation L2"],ans:[1],
+       explain:"<code>no ip routing</code> <strong>désactive le routage IP</strong> sur un commutateur multicouche, le faisant fonctionner comme un commutateur L2."},
+      {q:"Quelle interface SVI est l'interface de gestion par défaut sur un commutateur Cisco 2960 ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2024/11/2024-11-24_172309.jpg",
+        imgCap:"Port Security sticky — adresses MAC apprises automatiquement",
+        imgFallback:"Configuration Port Security avec sticky MAC : 'switchport port-security mac-address sticky'. Les adresses MAC sont apprises dynamiquement puis sauvegardées dans la running-config comme entrées statiques. Résultat de 'show port-security address'.",
+       opts:["VLAN 10","VLAN 1","VLAN 100","VLAN 999"],ans:[1],
+       explain:"L'interface de gestion par défaut est <strong>VLAN 1</strong> (interface virtuelle SVI)."},
+      {q:"Quelle commande active la journalisation des violations de sécurité Port Security sans désactiver le port ?",
+       opts:["switchport port-security violation protect","switchport port-security violation restrict","switchport port-security violation shutdown","switchport port-security enable log"],ans:[1],
+       explain:"Le mode <strong>restrict</strong> journalise les violations via syslog sans désactiver le port. Le mode protect rejette silencieusement."},
+      {q:"Qu'est-ce qu'un serveur WLC (Wireless LAN Controller) gère ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2024/11/2024-11-24_172607.jpg",
+        imgCap:"Topologie OSPF multi-zones — DR/BDR election",
+        imgFallback:"Topologie OSPF avec plusieurs zones et routeurs. Montre l'élection du DR (Designated Router) et BDR (Backup Designated Router) sur un réseau multi-accès. Le routeur avec la priorité la plus haute (ou le plus grand Router-ID) devient DR.",
+       opts:["Uniquement l'authentification des clients","La configuration centralisée des points d'accès","Le routage entre VLANs sans fil","La distribution d'adresses IP aux clients"],ans:[1],
+       explain:"Un <strong>WLC</strong> gère centralement la configuration, les politiques et le firmware de tous les points d'accès dans un réseau WiFi d'entreprise."}
+    ]
+  },
+  {
+    id:'examenfinale',
+    tag:'EXAMEN FINAL',
+    tagClass:'tag-fi',
+    title:'CCNA 2 – Examen Final du Cours SRWEv7',
+    short:'Exam Final',
+    questions:[
+      {q:"Quel est le rôle principal d'un commutateur dans un réseau LAN ?",
+       opts:["Relier des réseaux de technologies différentes","Filtrer le trafic selon les adresses MAC et commuter les trames","Assigner des adresses IP aux hôtes","Établir des connexions WAN sécurisées"],ans:[1],
+       explain:"Un commutateur filtre et commute les trames au niveau de la <strong>couche 2 (liaison de données)</strong> en utilisant les adresses MAC."},
+      {q:"Dans une topologie router-on-a-stick, quel type d'encapsulation est utilisé sur les sous-interfaces du routeur ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2021/12/2021-12-03_221514.jpg",
+        imgCap:"Router-on-a-stick — encapsulation dot1Q sur sous-interface",
+        imgFallback:"Montre la configuration router-on-a-stick sur un routeur Cisco avec des sous-interfaces (Gi0/0.10, Gi0/0.20, Gi0/0.30). L'encapsulation 'dot1Q [vlan-id]' est requise sur chaque sous-interface pour identifier le VLAN correspondant.",
+       opts:["ISL","802.1Q","802.1D","PPP"],ans:[1],
+       explain:"L'encapsulation <strong>802.1Q</strong> est utilisée sur les sous-interfaces du routeur pour le routage inter-VLAN en mode router-on-a-stick."},
+      {q:"Quelles sont les deux méthodes pour prévenir le VLAN Hopping ? (DEUX réponses)",
+       opts:["Activer DTP sur tous les ports","Désactiver DTP sur les ports d'accès","Configurer le VLAN natif sur un VLAN inutilisé","Activer PortFast sur tous les ports trunk","Utiliser VLAN 1 comme VLAN natif"],ans:[1,2],multi:true,
+       explain:"Prévenir le VLAN Hopping : <strong>désactiver DTP</strong> sur les ports d'accès + <strong>VLAN natif inutilisé</strong> différent de VLAN1."},
+      {q:"Quel algorithme STP est utilisé par défaut sur les commutateurs Cisco pour les réseaux VLAN multiples ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2021/12/2021-12-03_221548.jpg",
+        imgCap:"STP — commutateur Cisco utilise PVST+ par défaut",
+        imgFallback:"Montre le résultat de 'show spanning-tree' sur un commutateur Cisco indiquant le protocole PVST+ (Per-VLAN Spanning Tree Plus) utilisé par défaut. Une instance STP distincte est créée pour chaque VLAN, permettant un équilibrage de charge.",
+       opts:["STP (802.1D)","RSTP (802.1w)","PVST+","MST"],ans:[2],
+       explain:"Cisco utilise <strong>PVST+</strong> (Per-VLAN Spanning Tree Plus) par défaut, qui exécute une instance STP par VLAN."},
+      {q:"Quelle commande configure l'adresse IP de la passerelle sur une interface SVI de commutateur ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2021/12/2021-12-03_221606.jpg",
+        imgCap:"Interface SVI — commande ip default-gateway sur commutateur L2",
+        imgFallback:"Configuration d'une SVI sur un commutateur Cisco de couche 2 : 'interface vlan 1', 'ip address 192.168.1.2 255.255.255.0', 'no shutdown', puis 'ip default-gateway 192.168.1.1'. La passerelle par défaut permet au commutateur d'être administré depuis d'autres réseaux.",
+       opts:["ip default-gateway","ip route 0.0.0.0 0.0.0.0","ip address","gateway"],ans:[0],
+       explain:"<code>ip default-gateway</code> configure la passerelle par défaut sur un commutateur L2 pour la gestion hors-réseau."},
+      {q:"Quelle est la portée maximale d'une cellule WiFi 802.11ac à l'intérieur d'un bâtiment (approximatif) ?",
+       opts:["10 mètres","35 mètres","70 mètres","100 mètres"],ans:[2],
+       explain:"802.11ac (WiFi 5) a une portée intérieure d'environ <strong>35 mètres</strong>. La portée varie selon les obstacles et la puissance d'émission."},
+      {q:"Que signifie le terme 'convergence' dans le contexte de STP ?",
+       opts:["Toutes les interfaces sont en mode trunk","Tous les commutateurs ont la même table MAC","Tous les ports ont atteint un état stable (Forwarding ou Blocking)","Tous les VLANs sont synchronisés"],ans:[2],
+       explain:"La <strong>convergence STP</strong> est atteinte quand tous les ports ont atteint un état stable (Forwarding ou Blocking) sans boucles."},
+      {q:"Quelle commande Cisco configure une interface de commutateur pour apprendre automatiquement et sauvegarder les adresses MAC ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2021/12/2021-12-03_222651.jpg",
+        imgCap:"show ip dhcp binding — PC n'obtient pas d'adresse (pool épuisé)",
+        imgFallback:"Sortie de 'show ip dhcp binding' montrant les liaisons DHCP actives. Permet de diagnostiquer pourquoi un PC n'obtient pas d'adresse IP (pool épuisé, exclusion incorrecte, interface non configurée comme helper-address).",
+       opts:["switchport port-security maximum 5","switchport port-security mac-address sticky","switchport port-security violation restrict","switchport port-security aging time"],ans:[1],
+       explain:"<code>switchport port-security mac-address sticky</code> apprend les MACs dynamiquement et les <strong>sauvegarde dans la config courante</strong>."},
+      {q:"Quel standard EtherChannel permet une négociation automatique selon IEEE 802.3ad ?",
+       opts:["PAgP","LACP","Static EtherChannel","DTP"],ans:[1],
+       explain:"<strong>LACP</strong> (Link Aggregation Control Protocol) est le standard ouvert IEEE 802.3ad pour la négociation EtherChannel."},
+      {q:"Dans IPv6, quel type d'adresse est utilisé pour envoyer un paquet à plusieurs interfaces d'un groupe ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2021/12/2021-12-03_222840.jpg",
+        imgCap:"HSRP show standby — état actif/standby et IP virtuelle",
+        imgFallback:"Sortie de 'show standby' affichant : groupe HSRP, adresse IP virtuelle, routeur actif/standby, priorité, état de préemption. Permet de vérifier la configuration et l'état opérationnel de HSRP.",
+       opts:["Unicast","Anycast","Multicast","Broadcast"],ans:[2],
+       explain:"Une adresse <strong>Multicast IPv6</strong> envoie à toutes les interfaces d'un groupe. IPv6 n'a pas de broadcast (remplacé par multicast)."},
+      {q:"Quel protocole permet la découverte automatique de la topologie réseau entre périphériques Cisco voisins ?",
+       opts:["STP","CDP","LLDP","SNMP"],ans:[1],
+       explain:"<strong>CDP</strong> (Cisco Discovery Protocol) est propriétaire Cisco et permet la découverte automatique des périphériques voisins."},
+      {q:"Quelle action est effectuée par un commutateur quand il reçoit une trame dont l'adresse MAC de destination est inconnue ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2021/12/2021-12-19_223727.jpg",
+        imgCap:"show ip ospf neighbor — relation OSPF entre routeurs",
+        imgFallback:"Sortie de 'show ip ospf neighbor' affichant les voisins OSPF avec leur Router-ID, état (FULL/DR/BDR/DROTHER), uptime et interface. L'état FULL indique une adjacence complète et un échange de LSA réussi.",
+       opts:["Abandonne la trame","La transfère uniquement au port source","L'inonde sur tous les ports actifs sauf le port source","La stocke jusqu'à trouver la destination"],ans:[2],
+       explain:"Face à une MAC inconnue, le commutateur <strong>inonde (flood)</strong> la trame sur tous les ports actifs sauf celui d'entrée."},
+      {q:"Quelle commande configure le mode d'authentification WPA2 Entreprise sur un point d'accès Cisco ?",
+       opts:["encryption mode wpa2","dot11 ssid enterprise security wpa2","wpa-psk enterprise","security dot1x radius"],ans:[1],
+       explain:"La configuration WPA2 Entreprise utilise <strong>802.1X avec un serveur RADIUS</strong> pour l'authentification centralisée."},
+      {q:"Quel est le rôle de la commande 'ip dhcp pool [nom]' sur un routeur Cisco ?",
+        img:"https://ccnareponses.com/wp-content/uploads/2021/12/2021-12-19_224526.jpg",
+        imgCap:"Route IPv6 par défaut — ::/0 vers next-hop ou interface",
+        imgFallback:"CLI montrant la configuration d'une route statique IPv6 par défaut : 'ipv6 route ::/0 [next-hop ou interface]'. L'adresse ::/0 représente toutes les destinations IPv6 inconnues (équivalent IPv6 de 0.0.0.0/0 en IPv4).",
+       opts:["Exclure des adresses du DHCP","Créer un pool d'adresses DHCP","Activer le relais DHCP","Vérifier les attributions DHCP"],ans:[1],
+       explain:"<code>ip dhcp pool [nom]</code> <strong>crée un pool DHCP</strong> et entre en mode de configuration du pool."},
+      {q:"Quelle est la principale différence entre un mode infrastructure WiFi et un mode ad-hoc ?",
+       opts:["Infrastructure utilise un AP, ad-hoc connecte des clients directement entre eux","Infrastructure connecte les clients directement, ad-hoc utilise un AP","Infrastructure est plus lent que ad-hoc","Infrastructure n'utilise pas d'adresses IP"],ans:[0],
+       explain:"Mode <strong>infrastructure</strong> = clients se connectent via un AP. Mode <strong>ad-hoc</strong> = connexion directe peer-to-peer sans AP."}
+    ]
+  }
+];
+
+// ==================== STATE ====================
+let totalScore=0, totalAnswered=0;
+let state={};
+EXAMS.forEach(e=>{
+  state[e.id]={cur:0,score:0,answered:false,selected:new Set(),done:false};
+});
+
+// ==================== INIT ====================
+// ==================== IMG FALLBACK ====================
+function imgBlock(q){
+  if(!q.img) return '';
+  const desc = q.imgFallback || "Image non disponible. Consultez ccnareponses.com pour voir l'illustration originale.";
+  const cap = q.imgCap ? `<div class="qcard-img-cap">🖼 ${q.imgCap}</div>` : '';
+  return `<div class="qcard-img">
+    <img src="${q.img}" alt="${q.imgCap||'Illustration'}" onerror="this.classList.add('err')">
+    <div class="img-fallback">
+      <div class="img-fb-icon">🖼️</div>
+      <div class="img-fb-title">⚠ IMAGE NON DISPONIBLE</div>
+      <div class="img-fb-desc">${desc}</div>
+      <a class="img-fb-link" href="https://ccnareponses.com" target="_blank" rel="noopener">🔗 Voir sur ccnareponses.com</a>
+    </div>
+    ${cap}
+  </div>`;
+}
+
+function initApp(){
+  buildNav();
+  buildSidebar();
+  showDashboard();
+}
+
+function buildNav(){
+  const nav=document.getElementById('navExams');
+  nav.innerHTML='<button class="nav-btn active" onclick="showDashboard()" id="nav-home">🏠 Accueil</button>';
+  nav.innerHTML+='<button class="nav-btn lessons-nb" onclick="showLessonsPage()" id="nav-lessons">📚 Leçons</button>';
+  EXAMS.forEach(e=>{
+    nav.innerHTML+=`<button class="nav-btn" onclick="showExam('${e.id}')" id="nav-${e.id}">${e.short}</button>`;
+  });
+}
+
+function buildSidebar(){
+  const sb=document.getElementById('sidebar');
+  sb.innerHTML=`<div class="sidebar-title">NAVIGATION</div>
+    <div class="sidebar-item" onclick="showDashboard()">🏠 Tableau de bord</div>
+    <div class="sidebar-item lessons-sb" onclick="showLessonsPage()" id="sb-lessons">📚 Leçons</div>
+    <div style="height:.5rem"></div>
+    <div class="sidebar-title">EXAMENS CHECKPOINT</div>`;
+  EXAMS.filter(e=>e.tagClass==='tag-cp').forEach(e=>{
+    sb.innerHTML+=`<div class="sidebar-item" onclick="showExam('${e.id}')" id="sb-${e.id}">
+      ${e.short}<span class="badge">${e.questions.length}Q</span></div>`;
+  });
+  sb.innerHTML+=`<div style="height:.5rem"></div><div class="sidebar-title">EXAMENS BLANC & FINAL</div>`;
+  EXAMS.filter(e=>e.tagClass==='tag-pf'||e.tagClass==='tag-fi').forEach(e=>{
+    sb.innerHTML+=`<div class="sidebar-item" onclick="showExam('${e.id}')" id="sb-${e.id}">
+      ${e.short}<span class="badge">${e.questions.length}Q</span></div>`;
+  });
+  sb.innerHTML+=`<div style="height:.5rem"></div><div class="sidebar-title">MODULES</div>`;
+  EXAMS.filter(e=>e.tagClass==='tag-mod').forEach(e=>{
+    sb.innerHTML+=`<div class="sidebar-item" onclick="showExam('${e.id}')" id="sb-${e.id}">
+      ${e.short}<span class="badge">${e.questions.length}Q</span></div>`;
+  });
+}
+
+function setActiveNav(id){
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(b=>b.classList.remove('active'));
+  const n=document.getElementById('nav-'+id);
+  const s=document.getElementById('sb-'+id);
+  if(n)n.classList.add('active');
+  if(s)s.classList.add('active');
+}
+
+function updateScore(){
+  let ts=0,ta=0;
+  EXAMS.forEach(e=>{ts+=state[e.id].score;ta+=state[e.id].answered;});
+  document.getElementById('navScore').textContent=`🏆 ${ts}/${ta} pts`;
+}
+
+// ==================== DASHBOARD ====================
+function showDashboard(){
+  setActiveNav('home');
+  const totalQ=EXAMS.reduce((s,e)=>s+e.questions.length,0);
+  let ta=0,ts=0;
+  EXAMS.forEach(e=>{ta+=state[e.id].answered;ts+=state[e.id].score;});
+  const pct=ta>0?Math.round(ts/ta*100):0;
+
+  let cards=EXAMS.map(e=>{
+    const st=state[e.id];
+    return `<div class="dash-card" onclick="showExam('${e.id}')">
+      <div class="dash-card-tag ${e.tagClass}">${e.tag}</div>
+      <h3>${e.title}</h3>
+      <p>${e.questions.length} questions</p>
+      <div class="dash-stats">
+        <div class="dash-stat">Score <span>${st.score}/${st.answered}</span></div>
+        <div class="dash-stat">Progression <span>${st.cur}/${e.questions.length}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('content').innerHTML=`
+    <div class="dashboard">
+      <div class="dash-hero">
+        <h1>CCNA2 SRWE <span>Entraînement</span></h1>
+        <p>Site complet d'entraînement — ${EXAMS.length} examens — ${totalQ} questions</p>
+        <div style="margin-top:1.2rem;font-family:var(--mono);font-size:.85rem;color:var(--muted)">
+          Score global : <span style="color:var(--accent);font-size:1.1rem;font-weight:800">${ts}/${ta}</span>
+          ${ta>0?` (${pct}%)`:''}
+        </div>
+      </div>
+      <div class="dash-grid">${cards}</div>
+    </div>`;
+}
+
+// ==================== EXAM ====================
+let currentExamId=null;
+
+function showExam(id){
+  currentExamId=id;
+  setActiveNav(id);
+  const exam=EXAMS.find(e=>e.id===id);
+  if(state[id].done){showResults(id);return;}
+  renderExam(exam);
+}
+
+function renderExam(exam){
+  const st=state[exam.id];
+  const q=exam.questions[st.cur];
+  const pct=Math.round(st.cur/exam.questions.length*100);
+  const isMulti=q.multi===true;
+
+  const img=imgBlock(q);
+
+  const L=['A','B','C','D','E','F','G','H'];
+  const optsHtml=q.opts.map((o,i)=>{
+    if(isMulti) return `<button class="opt" onclick="sel('${exam.id}',${i})" id="o${i}"><div class="chk" id="chk${i}"></div><span>${o}</span></button>`;
+    return `<button class="opt" onclick="sel('${exam.id}',${i})" id="o${i}"><div class="opt-ic">${L[i]}</div><span>${o}</span></button>`;
+  }).join('');
+
+  document.getElementById('content').innerHTML=`
+    <div class="exam-header">
+      <div class="exam-title"><span class="tag ${exam.tagClass}">${exam.tag}</span>${exam.title}</div>
+      <div class="exam-meta">
+        <span>${exam.questions.length} questions</span>
+        <span>Score: ${st.score}/${st.answered}</span>
+      </div>
+      <div class="progress-row">
+        <div class="progress-bar-wrap"><div class="progress-bar" style="width:${pct}%"></div></div>
+        <div class="progress-text">${st.cur+1}/${exam.questions.length}</div>
+      </div>
+    </div>
+    <div class="qcard" id="qcard">
+      <div class="qcard-num">Q${st.cur+1} ${isMulti?'<span class="qcard-multi-tag">CHOIX MULTIPLE</span>':''}</div>
+      <div class="qcard-text">${q.q}</div>
+      ${img}
+      <div class="opts">${optsHtml}</div>
+      <div class="feedback" id="fb"></div>
+      <div class="qcard-actions">
+        <button class="btn-val" id="btnVal" onclick="validate('${exam.id}')" disabled>Valider</button>
+        <button class="btn-next" id="btnNext" onclick="nextQ('${exam.id}')">${st.cur<exam.questions.length-1?'Suivant →':'Résultats'}</button>
+      </div>
+    </div>`;
+  st.answered_cur=false;
+  st.selected=new Set();
+}
+
+function sel(examId,i){
+  const st=state[examId];
+  if(st.answered_cur)return;
+  const exam=EXAMS.find(e=>e.id===examId);
+  const q=exam.questions[st.cur];
+  const isMulti=q.multi===true;
+  if(isMulti){
+    const el=document.getElementById('o'+i),ch=document.getElementById('chk'+i);
+    if(st.selected.has(i)){st.selected.delete(i);el.classList.remove('sel');ch.textContent='';}
+    else{st.selected.add(i);el.classList.add('sel');ch.textContent='✓';}
+    document.getElementById('btnVal').disabled=st.selected.size===0;
+  } else {
+    document.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+    document.getElementById('o'+i).classList.add('sel');
+    st.selected=new Set([i]);
+    document.getElementById('btnVal').disabled=false;
+  }
+}
+
+function validate(examId){
+  const st=state[examId];
+  if(st.answered_cur)return;
+  st.answered_cur=true;
+  const exam=EXAMS.find(e=>e.id===examId);
+  const q=exam.questions[st.cur];
+  const correct=new Set(q.ans);
+  const ok=st.selected.size===correct.size&&[...st.selected].every(x=>correct.has(x));
+
+  q.opts.forEach((_,i)=>{
+    const el=document.getElementById('o'+i);
+    if(!el)return;
+    el.classList.add('disabled');
+    if(correct.has(i))el.classList.add('correct');
+    else if(st.selected.has(i))el.classList.add('wrong');
+    if(q.multi){const ch=document.getElementById('chk'+i);if(ch)ch.textContent=(correct.has(i)||st.selected.has(i))?'✓':'';}
+  });
+
+  if(ok)st.score++;
+  st.answered++;
+  updateScore();
+
+  const fb=document.getElementById('fb');
+  fb.className=`feedback show ${ok?'ok':'ko'}`;
+  fb.innerHTML=`<div class="feedback-title">${ok?'✅ Correct !':'❌ Incorrect'}</div>${q.explain}`;
+  document.getElementById('btnVal').style.display='none';
+  document.getElementById('btnNext').classList.add('show');
+}
+
+function nextQ(examId){
+  const st=state[examId];
+  const exam=EXAMS.find(e=>e.id===examId);
+  if(st.cur<exam.questions.length-1){st.cur++;renderExam(exam);}
+  else{st.done=true;showResults(examId);}
+}
+
+function showResults(examId){
+  const st=state[examId];
+  const exam=EXAMS.find(e=>e.id===examId);
+  const pct=Math.round(st.score/exam.questions.length*100);
+  const stars=pct>=80?'⭐⭐⭐':pct>=60?'⭐⭐':'⭐';
+  const emoji=pct>=80?'🎉':pct>=60?'👍':'📚';
+  const msg=pct>=80?'Excellent travail ! Tu es prêt(e) !':pct>=60?'Bien ! Encore quelques révisions...':'Consulte le cours et réessaie !';
+
+  document.getElementById('content').innerHTML=`
+    <div class="exam-header">
+      <div class="exam-title"><span class="tag ${exam.tagClass}">${exam.tag}</span>${exam.title}</div>
+    </div>
+    <div class="results">
+      <div class="res-emoji">${emoji}</div>
+      <div class="res-score">${st.score}/${exam.questions.length}</div>
+      <div class="res-pct">${pct}% de bonnes réponses</div>
+      <div class="res-stars">${stars}</div>
+      <div class="res-msg">${msg}</div>
+      <button class="btn-restart" onclick="restartExam('${examId}')">🔄 Recommencer cet examen</button>
+    </div>`;
+}
+
+function restartExam(examId){
+  state[examId]={cur:0,score:0,answered:0,answered_cur:false,selected:new Set(),done:false};
+  showExam(examId);
+}
+const LESSONS = [
+  {
+    id: 'mod1',
+    title: '📡 Module 1 – Configuration de base des périphériques',
+    chapters: [
+      {
+        title: 'Séquence de démarrage d\'un commutateur',
+        content: `
+<h3>Séquence de boot d'un commutateur Cisco</h3>
+<p>Quand un commutateur Cisco s'allume, il suit une séquence précise :</p>
+<ol>
+<li><strong>POST</strong> (Power-On Self-Test) — test matériel automatique des composants</li>
+<li><strong>Boot Loader</strong> — programme minimal stocké en ROM, permet le bas niveau</li>
+<li><strong>Initialisation CPU</strong> — le boot loader initialise le processeur</li>
+<li><strong>Flash init</strong> — initialisation du système de fichiers flash</li>
+<li><strong>Chargement IOS</strong> — l'IOS est chargé depuis la flash selon la variable BOOT</li>
+</ol>
+<div class="ls-box blue">
+<strong>Variable d'environnement BOOT</strong><br>
+Commande : <code>boot system flash:c2960-lanbasek9-mz.150-2.SE4.bin</code><br>
+Elle indique où trouver le fichier image IOS. Sans elle, le commutateur charge le premier IOS trouvé dans la flash.
+</div>
+<div class="ls-abbr">
+  <div><span>POST</span> Power-On Self-Test — vérification matérielle au démarrage</div>
+  <div><span>ROM</span> Read-Only Memory — mémoire permanente non volatile (boot loader)</div>
+  <div><span>NVRAM</span> Non-Volatile RAM — stocke la configuration de démarrage (startup-config)</div>
+  <div><span>IOS</span> Internetwork Operating System — système d'exploitation Cisco</div>
+</div>`
+      },
+      {
+        title: 'Méthodes de commutation',
+        content: `
+<h3>Les trois méthodes de commutation (forwarding)</h3>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Méthode</th><th>Principe</th><th>Vérif. erreur</th><th>Latence</th></tr>
+<tr><td><strong>Store-and-Forward</strong></td><td>Reçoit la trame entière avant de transmettre</td><td>✅ Oui (FCS complet)</td><td>Élevée</td></tr>
+<tr><td><strong>Cut-Through</strong></td><td>Transmet dès la lecture de la MAC destination</td><td>❌ Non</td><td>Très faible</td></tr>
+<tr><td><strong>Fragment-Free</strong></td><td>Lit les 64 premiers octets avant de transmettre</td><td>Partielle</td><td>Faible</td></tr>
+</table></div>
+<div class="ls-box green">
+<strong>Quand utiliser Store-and-Forward ?</strong><br>
+Quand la qualité est primordiale (QoS, réseaux critiques). Il garantit qu'aucune trame corrompue n'est transmise grâce à la vérification FCS.
+</div>
+<div class="ls-abbr">
+  <div><span>FCS</span> Frame Check Sequence — champ de vérification d'erreur en fin de trame Ethernet (4 octets CRC)</div>
+  <div><span>CRC</span> Cyclic Redundancy Check — algorithme de détection d'erreur</div>
+  <div><span>CAM</span> Content Addressable Memory — mémoire de la table d'adresses MAC du commutateur</div>
+</div>`
+      },
+      {
+        title: 'Table MAC et décisions de commutation',
+        content: `
+<h3>Comment un commutateur apprend et transmet</h3>
+<p><strong>Apprentissage :</strong> Un commutateur lit la <strong>MAC source</strong> de chaque trame entrante et l'associe au port d'entrée dans sa table CAM.</p>
+<p><strong>Transfert :</strong> Il lit la <strong>MAC destination</strong> et cherche dans la table :</p>
+<ul>
+<li>MAC trouvée → envoie uniquement sur le port correspondant (unicast)</li>
+<li>MAC inconnue → inonde (<em>flood</em>) sur tous les ports sauf le port source</li>
+<li>MAC de diffusion (FF:FF:FF:FF:FF:FF) → inonde sur tous les ports</li>
+</ul>
+<div class="ls-box orange">
+<strong>Domaines de collision vs Domaines de diffusion</strong><br>
+• Hub : un seul domaine de collision, un seul domaine de diffusion<br>
+• Commutateur L2 : un domaine de collision par port, un seul domaine de diffusion<br>
+• Routeur : un domaine de collision par port, sépare les domaines de diffusion
+</div>
+<div class="ls-abbr">
+  <div><span>MAC</span> Media Access Control — adresse physique unique de 48 bits (ex: 00:1A:2B:3C:4D:5E)</div>
+  <div><span>ASIC</span> Application-Specific Integrated Circuit — circuit dédié qui accélère le traitement dans les commutateurs</div>
+  <div><span>SVI</span> Switched Virtual Interface — interface virtuelle de gestion sur un commutateur (ex: interface VLAN 1)</div>
+</div>`
+      },
+      {
+        title: 'Configuration de base SSH',
+        content: `
+<h3>Sécuriser l'accès distant avec SSH</h3>
+<p>SSH (Secure Shell) chiffre les communications. Telnet envoie tout en clair — à éviter absolument en production.</p>
+<div class="ls-code">! 1. Configurer un nom d'hôte et un domaine
+Switch(config)# hostname SW1
+SW1(config)# ip domain-name cisco.com
+
+! 2. Générer les clés RSA (minimum 1024 bits)
+SW1(config)# crypto key generate rsa modulus 1024
+
+! 3. Créer un utilisateur local
+SW1(config)# username admin secret Cisco123
+
+! 4. Configurer les lignes VTY pour SSH uniquement
+SW1(config)# line vty 0 15
+SW1(config-line)# transport input ssh
+SW1(config-line)# login local
+
+! 5. Activer SSH version 2
+SW1(config)# ip ssh version 2</div>
+<div class="ls-abbr">
+  <div><span>SSH</span> Secure Shell — protocole d'accès distant chiffré (port TCP 22)</div>
+  <div><span>Telnet</span> Terminal Network — protocole non chiffré (port TCP 23) — à éviter</div>
+  <div><span>RSA</span> Rivest–Shamir–Adleman — algorithme de chiffrement asymétrique utilisé pour SSH</div>
+  <div><span>VTY</span> Virtual Teletype — lignes virtuelles pour les connexions distantes (0 à 15)</div>
+  <div><span>EXEC</span> Execute — mode d'invite de commande IOS (user EXEC: >, privileged EXEC: #)</div>
+</div>`
+      },
+      {
+        title: 'Configuration de base d\'un routeur',
+        content: `
+<h3>Paramètres de base d'un routeur Cisco</h3>
+<div class="ls-code">! Nom d'hôte
+Router(config)# hostname R1
+
+! Mot de passe mode privilégié
+R1(config)# enable secret Cisco123
+
+! Interface avec IP
+R1(config)# interface GigabitEthernet0/0
+R1(config-if)# ip address 192.168.1.1 255.255.255.0
+R1(config-if)# description "LAN Interface"
+R1(config-if)# no shutdown       ← IMPORTANT: interfaces éteintes par défaut!
+
+! Interface loopback
+R1(config)# interface loopback 0
+R1(config-if)# ip address 1.1.1.1 255.255.255.255
+
+! Sauvegarder la configuration
+R1# copy running-config startup-config</div>
+<div class="ls-box blue">
+<strong>Interfaces loopback</strong><br>
+Une interface loopback est <strong>logique</strong> (pas de port physique). Elle est toujours UP tant que le routeur fonctionne. Plusieurs interfaces loopback peuvent coexister sur un même routeur. Elles sont utilisées pour les tests, le routage (OSPF Router ID), etc.
+</div>
+<div class="ls-abbr">
+  <div><span>CLI</span> Command Line Interface — interface en ligne de commande</div>
+  <div><span>NVRAM</span> Non-Volatile RAM — startup-config stockée ici, survit aux redémarrages</div>
+  <div><span>RAM</span> Random Access Memory — running-config stockée ici, perdue à l'extinction</div>
+  <div><span>show ip interface brief</span> — affiche le résumé de toutes les interfaces (IP, état)</div>
+</div>`
+      }
+    ]
+  },
+  {
+    id: 'mod2',
+    title: '🔀 Module 2 – Concepts de Commutation',
+    chapters: [
+      {
+        title: 'Architecture et types de commutateurs',
+        content: `
+<h3>Rôle d'un commutateur dans le réseau</h3>
+<p>Un commutateur opère à la <strong>couche 2</strong> (Liaison de données) du modèle OSI. Son rôle est de <strong>commuter des trames</strong> entre ports en se basant sur les adresses MAC.</p>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Type</th><th>Couche OSI</th><th>Fonctionnalité</th></tr>
+<tr><td>Commutateur L2</td><td>Couche 2</td><td>Commutation par MAC uniquement</td></tr>
+<tr><td>Commutateur L3</td><td>Couches 2 & 3</td><td>Commutation MAC + Routage IP</td></tr>
+<tr><td>Commutateur L4-L7</td><td>Couches 4-7</td><td>Inspection applicative, load balancing</td></tr>
+</table></div>
+<div class="ls-box blue">
+<strong>Microsegmentation</strong><br>
+Chaque port d'un commutateur = son propre domaine de collision. Cela élimine pratiquement les collisions sur les réseaux modernes full-duplex.
+</div>
+<div class="ls-abbr">
+  <div><span>OSI</span> Open Systems Interconnection — modèle en 7 couches (Physique, Liaison, Réseau, Transport, Session, Présentation, Application)</div>
+  <div><span>PDU</span> Protocol Data Unit — unité de données par couche (trame L2, paquet L3, segment L4)</div>
+  <div><span>Full-duplex</span> Transmission simultanée dans les deux sens — élimine les collisions</div>
+  <div><span>Half-duplex</span> Transmission dans un seul sens à la fois — peut provoquer des collisions</div>
+</div>`
+      },
+      {
+        title: 'Mémoire tampon et performances',
+        content: `
+<h3>Gestion de la mémoire tampon (buffer)</h3>
+<p>Les commutateurs utilisent des <strong>tampons de trame</strong> pour stocker temporairement les trames quand le port de sortie est occupé.</p>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Type de buffer</th><th>Description</th></tr>
+<tr><td><strong>Port-based</strong></td><td>Buffer dédié par port — trames stockées sur le port de destination</td></tr>
+<tr><td><strong>Shared memory</strong></td><td>Buffer commun — plus flexible, gère mieux les différences de vitesse</td></tr>
+</table></div>
+<div class="ls-box green">
+<strong>Auto-MDIX</strong><br>
+Commande : <code>mdix auto</code><br>
+Détecte automatiquement le type de câble (droit ou croisé) et configure l'interface en conséquence. Élimine le besoin de câbles croisés entre équipements similaires.
+</div>
+<div class="ls-abbr">
+  <div><span>MDIX</span> Medium Dependent Interface Crossover — auto-détection du type de câble</div>
+  <div><span>QoS</span> Quality of Service — mécanismes de priorisation du trafic réseau</div>
+  <div><span>PoE</span> Power over Ethernet — alimentation électrique via câble Ethernet (téléphones IP, AP WiFi)</div>
+  <div><span>SFP</span> Small Form-factor Pluggable — module d'interface fibre optique ou cuivre enfichable</td></tr>
+</div>`
+      }
+    ]
+  },
+  {
+    id: 'mod3',
+    title: '🏷️ Module 3 – VLANs',
+    chapters: [
+      {
+        title: 'Concepts fondamentaux des VLANs',
+        content: `
+<h3>Qu'est-ce qu'un VLAN ?</h3>
+<p>Un <strong>VLAN (Virtual LAN)</strong> est un réseau logique qui segmente un réseau physique en plusieurs domaines de diffusion isolés, indépendamment de la topologie physique.</p>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Type de VLAN</th><th>Rôle</th><th>Exemple</th></tr>
+<tr><td><strong>VLAN par défaut</strong></td><td>VLAN initial de tous les ports</td><td>VLAN 1</td></tr>
+<tr><td><strong>VLAN données</strong></td><td>Trafic utilisateur normal</td><td>VLAN 10, 20, 30</td></tr>
+<tr><td><strong>VLAN natif</strong></td><td>Trafic non étiqueté sur trunk</td><td>VLAN 99 (recommandé)</td></tr>
+<tr><td><strong>VLAN de gestion</strong></td><td>Accès SSH/Telnet/SNMP</td><td>VLAN 99</td></tr>
+<tr><td><strong>VLAN voix</strong></td><td>Trafic VoIP, latence < 150ms</td><td>VLAN 150</td></tr>
+</table></div>
+<div class="ls-box orange">
+<strong>Bonnes pratiques Cisco</strong><br>
+• Ne pas utiliser VLAN 1 comme VLAN natif ou de gestion<br>
+• Créer un VLAN natif dédié et inutilisé<br>
+• Désactiver les ports inutilisés et les placer dans un VLAN "poubelle"
+</div>
+<div class="ls-abbr">
+  <div><span>VLAN</span> Virtual Local Area Network — réseau local virtuel logique</div>
+  <div><span>VID</span> VLAN Identifier — identifiant VLAN sur 12 bits (1 à 4094)</div>
+  <div><span>SVI</span> Switched Virtual Interface — interface virtuelle d'un VLAN sur un commutateur L3</div>
+</div>`
+      },
+      {
+        title: 'Configuration des VLANs',
+        content: `
+<h3>Commandes de configuration VLAN</h3>
+<div class="ls-code">! Créer un VLAN
+Switch(config)# vlan 10
+Switch(config-vlan)# name Vente
+
+! Affecter un port en mode accès
+Switch(config)# interface FastEthernet0/1
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport access vlan 10
+
+! Configurer un VLAN voix
+Switch(config-if)# switchport voice vlan 150
+Switch(config-if)# mls qos trust cos
+
+! Supprimer un VLAN spécifique
+Switch(config)# no vlan 10
+
+! Supprimer TOUS les VLANs
+Switch# delete flash:vlan.dat
+
+! Vérification
+Switch# show vlan brief
+Switch# show interfaces FastEthernet0/1 switchport</div>
+<div class="ls-box blue">
+<strong>Fichier vlan.dat</strong><br>
+Les VLANs sont stockés dans le fichier <code>vlan.dat</code> en flash (pas dans la startup-config). C'est pourquoi <code>delete flash:vlan.dat</code> + redémarrage est nécessaire pour tout effacer.
+</div>
+<div class="ls-abbr">
+  <div><span>CoS</span> Class of Service — priorité de qualité de service sur une trame Ethernet (3 bits dans l'en-tête 802.1Q)</div>
+  <div><span>MLS</span> Multilayer Switching — commutation multicouche (L2+L3)</div>
+  <div><span>mls qos trust cos</span> — indique au commutateur de faire confiance aux valeurs CoS reçues sur ce port</div>
+</div>`
+      },
+      {
+        title: 'Liaisons Trunk (agrégation)',
+        content: `
+<h3>Les liaisons trunk — transporter plusieurs VLANs</h3>
+<p>Une liaison <strong>trunk</strong> transporte le trafic de <strong>plusieurs VLANs</strong> entre commutateurs. Le protocole <strong>802.1Q</strong> ajoute un tag de 4 octets à chaque trame pour identifier son VLAN.</p>
+<div class="ls-code">! Configurer un port en mode trunk
+Switch(config)# interface GigabitEthernet0/1
+Switch(config-if)# switchport mode trunk
+Switch(config-if)# switchport trunk native vlan 99
+Switch(config-if)# switchport trunk allowed vlan 10,20,30,99
+
+! Désactiver DTP (bonne pratique)
+Switch(config-if)# switchport nonegotiate
+
+! Vérification
+Switch# show interfaces trunk
+Switch# show interfaces GigabitEthernet0/1 switchport</div>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Champ 802.1Q (4 octets)</th><th>Taille</th><th>Description</th></tr>
+<tr><td>TPID (Type)</td><td>2 octets</td><td>Valeur 0x8100 = trame étiquetée</td></tr>
+<tr><td>PCP (Priorité)</td><td>3 bits</td><td>Priorité CoS (0 à 7)</td></tr>
+<tr><td>CFI</td><td>1 bit</td><td>Canonical Format Indicator</td></tr>
+<tr><td>VID</td><td>12 bits</td><td>Numéro du VLAN (0 à 4095)</td></tr>
+</table></div>
+<div class="ls-abbr">
+  <div><span>802.1Q</span> Standard IEEE pour l'étiquetage VLAN sur les liaisons trunk</div>
+  <div><span>TPID</span> Tag Protocol Identifier — identifie le type d'étiquette (0x8100 pour 802.1Q)</div>
+  <div><span>DTP</span> Dynamic Trunking Protocol — protocole Cisco propriétaire de négociation de trunk</div>
+  <div><span>ISL</span> Inter-Switch Link — ancien protocole propriétaire Cisco de trunk (obsolète)</div>
+  <div><span>Native VLAN</span> VLAN qui reçoit les trames non étiquetées sur un trunk</div>
+</div>`
+      },
+      {
+        title: 'Protocole DTP',
+        content: `
+<h3>DTP — Dynamic Trunking Protocol</h3>
+<p>DTP est un protocole propriétaire Cisco qui négocie automatiquement l'établissement d'une liaison trunk.</p>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Mode DTP</th><th>Comportement</th></tr>
+<tr><td><strong>dynamic auto</strong></td><td>Attente passive — devient trunk si le voisin est trunk ou desirable</td></tr>
+<tr><td><strong>dynamic desirable</strong></td><td>Tente activement de devenir trunk</td></tr>
+<tr><td><strong>trunk</strong></td><td>Mode trunk permanent, négocie avec le voisin</td></tr>
+<tr><td><strong>access</strong></td><td>Mode accès permanent, pas de trunk</td></tr>
+<tr><td><strong>nonegotiate</strong></td><td>Désactive DTP — configuration manuelle obligatoire</td></tr>
+</table></div>
+<div class="ls-box orange">
+<strong>Quand désactiver DTP ?</strong><br>
+• Connexion à un commutateur non-Cisco (tiers)<br>
+• Sur les ports d'accès (hôtes finaux)<br>
+• Sur les liaisons ne devant PAS être trunk<br>
+Commande : <code>switchport nonegotiate</code>
+</div>`
+      }
+    ]
+  },
+  {
+    id: 'mod4',
+    title: '🔁 Module 4 – Routage Inter-VLAN',
+    chapters: [
+      {
+        title: 'Méthodes de routage inter-VLAN',
+        content: `
+<h3>Comment router entre VLANs ?</h3>
+<p>Les VLANs isolent le trafic — pour communiquer entre VLANs, il faut un dispositif de couche 3 (routeur ou commutateur L3).</p>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Méthode</th><th>Équipement</th><th>Avantages</th><th>Inconvénients</th></tr>
+<tr><td><strong>Interfaces physiques multiples</strong></td><td>Routeur multi-interfaces</td><td>Simple</td><td>Coûteux, 1 interface par VLAN</td></tr>
+<tr><td><strong>Router-on-a-Stick</strong></td><td>Routeur + trunk</td><td>1 seule interface physique</td><td>Goulot d'étranglement possible</td></tr>
+<tr><td><strong>SVI (L3 Switch)</strong></td><td>Commutateur L3</td><td>Rapide, pas de routeur</td><td>Plus cher</td></tr>
+</table></div>`
+      },
+      {
+        title: 'Router-on-a-Stick',
+        content: `
+<h3>Router-on-a-Stick — Configuration</h3>
+<p>Un seul câble physique relie le routeur au commutateur en mode trunk. Des <strong>sous-interfaces</strong> virtuelles sont créées sur l'interface physique du routeur.</p>
+<div class="ls-code">! Sur le routeur
+Router(config)# interface GigabitEthernet0/0.10     ← sous-interface VLAN 10
+Router(config-subif)# encapsulation dot1Q 10         ← encapsulation 802.1Q
+Router(config-subif)# ip address 192.168.10.1 255.255.255.0
+
+Router(config)# interface GigabitEthernet0/0.20     ← sous-interface VLAN 20
+Router(config-subif)# encapsulation dot1Q 20
+Router(config-subif)# ip address 192.168.20.1 255.255.255.0
+
+Router(config)# interface GigabitEthernet0/0.99     ← VLAN natif
+Router(config-subif)# encapsulation dot1Q 99 native
+Router(config-subif)# ip address 192.168.99.1 255.255.255.0
+
+! Activer l'interface physique
+Router(config)# interface GigabitEthernet0/0
+Router(config-if)# no shutdown
+
+! Sur le commutateur — port vers routeur en trunk
+Switch(config)# interface GigabitEthernet0/1
+Switch(config-if)# switchport mode trunk</div>
+<div class="ls-box orange">
+<strong>Erreur fréquente !</strong><br>
+La commande <code>encapsulation dot1Q [vlan-id]</code> DOIT être configurée AVANT l'adresse IP sur la sous-interface, sinon une erreur se produit.
+</div>
+<div class="ls-abbr">
+  <div><span>Router-on-a-Stick</span> Méthode de routage inter-VLAN avec une seule interface physique du routeur</div>
+  <div><span>Sous-interface</span> Interface logique créée sur une interface physique (ex: Gi0/0.10)</div>
+  <div><span>dot1Q</span> Abréviation de 802.1Q — protocole d'étiquetage VLAN</div>
+</div>`
+      },
+      {
+        title: 'Commutation L3 et SVI',
+        content: `
+<h3>Commutateur multicouche — SVI pour le routage inter-VLAN</h3>
+<p>Un commutateur L3 (multicouche) peut router directement entre VLANs via des interfaces SVI sans routeur externe.</p>
+<div class="ls-code">! Activer le routage IP sur le commutateur L3
+Switch(config)# ip routing
+
+! Créer une SVI pour chaque VLAN
+Switch(config)# interface vlan 10
+Switch(config-if)# ip address 192.168.10.1 255.255.255.0
+Switch(config-if)# no shutdown
+
+Switch(config)# interface vlan 20
+Switch(config-if)# ip address 192.168.20.1 255.255.255.0
+Switch(config-if)# no shutdown
+
+! Port routé (pas de trunk, juste IP)
+Switch(config)# interface GigabitEthernet0/1
+Switch(config-if)# no switchport                    ← transforme en port routé L3
+Switch(config-if)# ip address 10.0.0.1 255.255.255.252</div>
+<div class="ls-abbr">
+  <div><span>SVI</span> Switched Virtual Interface — interface VLAN virtuelle sur un commutateur L3 (ex: interface vlan 10)</div>
+  <div><span>Port routé</span> Port de commutateur L3 configuré comme interface de routeur (commande <code>no switchport</code>)</div>
+  <div><span>ip routing</span> Commande qui active le routage IP sur un commutateur multicouche</div>
+</div>`
+      }
+    ]
+  },
+  {
+    id: 'mod5',
+    title: '🌳 Module 5 – STP (Spanning Tree Protocol)',
+    chapters: [
+      {
+        title: 'Pourquoi STP ? Le problème des boucles',
+        content: `
+<h3>Les boucles de couche 2 — un problème grave</h3>
+<p>Sans STP, des chemins redondants entre commutateurs créent des <strong>boucles de diffusion</strong> qui peuvent saturer complètement le réseau.</p>
+<div class="ls-box red">
+<strong>Effets des boucles L2</strong><br>
+• <strong>Tempête de diffusion</strong> : les broadcasts se multiplient à l'infini<br>
+• <strong>Instabilité MAC</strong> : les adresses MAC "sautent" entre les ports<br>
+• <strong>Réseau inutilisable</strong> : utilisation CPU à 100%, réseau figé
+</div>
+<h3>Solution : STP bloque les ports redondants</h3>
+<p>STP maintient un réseau sans boucle en bloquant sélectivement certains ports tout en gardant des chemins alternatifs prêts.</p>
+<div class="ls-abbr">
+  <div><span>STP</span> Spanning Tree Protocol — IEEE 802.1D — protocole d'élimination des boucles L2</div>
+  <div><span>RSTP</span> Rapid STP — IEEE 802.1w — version rapide (convergence < 6s vs ~50s pour STP)</div>
+  <div><span>PVST+</span> Per-VLAN STP Plus — version Cisco : une instance STP par VLAN</div>
+  <div><span>MST</span> Multiple Spanning Tree — IEEE 802.1s — plusieurs VLANs mappés sur une instance STP</div>
+</div>`
+      },
+      {
+        title: 'Élection du pont racine et BID',
+        content: `
+<h3>Sélection du pont racine (Root Bridge)</h3>
+<p>Le commutateur avec le <strong>BID le plus bas</strong> devient le pont racine. Le BID = Priorité (2 octets) + Adresse MAC (6 octets).</p>
+<div class="ls-code">! Vérifier le pont racine actuel
+Switch# show spanning-tree
+
+! Configurer la priorité manuellement
+Switch(config)# spanning-tree vlan 10 priority 4096
+
+! Configurer comme pont racine principal (ajuste auto la priorité)
+Switch(config)# spanning-tree vlan 10 root primary
+
+! Configurer comme pont racine secondaire
+Switch(config)# spanning-tree vlan 10 root secondary</div>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Priorité</th><th>Valeur</th><th>Utilisation</th></tr>
+<tr><td>Défaut</td><td>32768</td><td>Tous les commutateurs sans config spécifique</td></tr>
+<tr><td>Root Primary</td><td>24576</td><td>Valeur typique pour le pont racine principal</td></tr>
+<tr><td>Root Secondary</td><td>28672</td><td>Valeur typique pour le pont racine secondaire</td></tr>
+<tr><td>Minimum</td><td>0</td><td>Garantit le rôle de pont racine</td></tr>
+</table></div>
+<div class="ls-abbr">
+  <div><span>BID</span> Bridge ID — identifiant unique d'un commutateur STP = Priorité + MAC</div>
+  <div><span>Root Bridge</span> Pont racine — commutateur au centre de la topologie STP, tous les ports en Forwarding</div>
+  <div><span>BPDU</span> Bridge Protocol Data Unit — messages STP échangés entre commutateurs</div>
+  <div><span>Hello Timer</span> Intervalle entre BPDUs (défaut : 2 secondes)</div>
+</div>`
+      },
+      {
+        title: 'États et rôles des ports STP',
+        content: `
+<h3>Rôles des ports STP</h3>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Rôle</th><th>Description</th></tr>
+<tr><td><strong>Root Port (RP)</strong></td><td>Meilleur chemin vers le pont racine (un par commutateur non-racine)</td></tr>
+<tr><td><strong>Designated Port (DP)</strong></td><td>Transmet le trafic sur chaque segment (un par segment)</td></tr>
+<tr><td><strong>Non-Designated Port</strong></td><td>Bloqué pour éviter les boucles</td></tr>
+<tr><td><strong>Disabled Port</strong></td><td>Port administrativement désactivé</td></tr>
+</table></div>
+<h3>États des ports STP (802.1D)</h3>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>État</th><th>Durée</th><th>Transfert données</th><th>Apprentissage MAC</th></tr>
+<tr><td><strong>Blocking</strong></td><td>20s (Max Age)</td><td>❌</td><td>❌</td></tr>
+<tr><td><strong>Listening</strong></td><td>15s (Forward Delay)</td><td>❌</td><td>❌</td></tr>
+<tr><td><strong>Learning</strong></td><td>15s (Forward Delay)</td><td>❌</td><td>✅</td></tr>
+<tr><td><strong>Forwarding</strong></td><td>Permanent</td><td>✅</td><td>✅</td></tr>
+<tr><td><strong>Disabled</strong></td><td>—</td><td>❌</td><td>❌</td></tr>
+</table></div>
+<div class="ls-box blue">
+<strong>RSTP — États simplifiés</strong><br>
+RSTP réduit à 3 états : Discarding (= Blocking+Listening), Learning, Forwarding.<br>
+Convergence typique : <strong>< 6 secondes</strong> vs ~50 secondes pour STP 802.1D.
+</div>`
+      },
+      {
+        title: 'PortFast, BPDU Guard et Root Guard',
+        content: `
+<h3>Fonctionnalités de sécurité STP</h3>
+<div class="ls-code">! PortFast — passage direct Forwarding pour ports d'accès
+Switch(config-if)# spanning-tree portfast
+! En global (tous les ports d'accès)
+Switch(config)# spanning-tree portfast default
+
+! BPDU Guard — désactive le port si un BPDU est reçu
+Switch(config-if)# spanning-tree bpduguard enable
+! En global (sur tous les ports PortFast)
+Switch(config)# spanning-tree portfast bpduguard default
+
+! Root Guard — protège la position du pont racine
+Switch(config-if)# spanning-tree guard root
+
+! Loop Guard — protège contre les ports qui ne reçoivent plus de BPDU
+Switch(config-if)# spanning-tree guard loop</div>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Fonctionnalité</th><th>Rôle</th><th>Quand utiliser</th></tr>
+<tr><td><strong>PortFast</strong></td><td>Bypass des états STP initiaux</td><td>Ports vers hôtes finaux uniquement</td></tr>
+<tr><td><strong>BPDU Guard</strong></td><td>Désactive port si BPDU reçu</td><td>Avec PortFast (protection)</td></tr>
+<tr><td><strong>Root Guard</strong></td><td>Empêche de devenir pont racine</td><td>Ports vers commutateurs inférieurs</td></tr>
+<tr><td><strong>Loop Guard</strong></td><td>Protège contre perte de BPDU</td><td>Ports qui devraient rester bloqués</td></tr>
+</table></div>`
+      }
+    ]
+  },
+  {
+    id: 'mod6',
+    title: '⚡ Module 6 – EtherChannel',
+    chapters: [
+      {
+        title: 'Concepts EtherChannel',
+        content: `
+<h3>EtherChannel — Agrégation de liaisons</h3>
+<p>EtherChannel regroupe de <strong>2 à 8 liaisons physiques</strong> en une seule liaison logique, multipliant la bande passante et offrant la redondance.</p>
+<div class="ls-box green">
+<strong>Avantages d'EtherChannel</strong><br>
+• <strong>Bande passante additionnée</strong> : 4 × 1 Gbps = 4 Gbps logique<br>
+• <strong>Redondance</strong> : si un lien tombe, les autres continuent<br>
+• <strong>STP transparent</strong> : STP voit une seule liaison logique, pas de blocage
+</div>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Protocole</th><th>Standard</th><th>Modes</th></tr>
+<tr><td><strong>PAgP</strong></td><td>Propriétaire Cisco</td><td>Desirable (actif) / Auto (passif)</td></tr>
+<tr><td><strong>LACP</strong></td><td>IEEE 802.3ad / 802.1ax</td><td>Active (actif) / Passive (passif)</td></tr>
+<tr><td><strong>Static</strong></td><td>—</td><td>Mode "on" — pas de négociation</td></tr>
+</table></div>
+<div class="ls-abbr">
+  <div><span>EtherChannel</span> Technologie Cisco d'agrégation de liens (aussi appelée LAG, Port-Channel, Link Aggregation)</div>
+  <div><span>PAgP</span> Port Aggregation Protocol — protocole Cisco propriétaire de négociation EtherChannel</div>
+  <div><span>LACP</span> Link Aggregation Control Protocol — standard IEEE ouvert pour EtherChannel</div>
+  <div><span>LAG</span> Link Aggregation Group — groupe de liaisons agrégées</div>
+  <div><span>Port-Channel</span> Nom de l'interface logique EtherChannel sur Cisco (ex: port-channel1)</div>
+</div>`
+      },
+      {
+        title: 'Configuration et vérification EtherChannel',
+        content: `
+<h3>Configuration EtherChannel</h3>
+<div class="ls-code">! Méthode 1 : LACP (recommandé — standard ouvert)
+Switch(config)# interface range GigabitEthernet0/1-2
+Switch(config-if-range)# channel-group 1 mode active      ← LACP active
+Switch(config-if-range)# channel-protocol lacp
+
+! Méthode 2 : PAgP (Cisco uniquement)
+Switch(config)# interface range GigabitEthernet0/1-2
+Switch(config-if-range)# channel-group 1 mode desirable   ← PAgP desirable
+
+! Méthode 3 : Statique (pas de négociation)
+Switch(config)# interface range GigabitEthernet0/1-2
+Switch(config-if-range)# channel-group 1 mode on
+
+! Configurer l'interface logique port-channel
+Switch(config)# interface port-channel 1
+Switch(config-if)# switchport mode trunk
+Switch(config-if)# switchport trunk allowed vlan 10,20,30
+
+! Vérification
+Switch# show etherchannel summary
+Switch# show etherchannel detail
+Switch# show interfaces port-channel 1</div>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Combinaison modes</th><th>EtherChannel formé ?</th></tr>
+<tr><td>Active + Active (LACP)</td><td>✅ Oui</td></tr>
+<tr><td>Active + Passive (LACP)</td><td>✅ Oui</td></tr>
+<tr><td>Passive + Passive (LACP)</td><td>❌ Non</td></tr>
+<tr><td>Desirable + Desirable (PAgP)</td><td>✅ Oui</td></tr>
+<tr><td>Desirable + Auto (PAgP)</td><td>✅ Oui</td></tr>
+<tr><td>Auto + Auto (PAgP)</td><td>❌ Non</td></tr>
+<tr><td>On + On (Static)</td><td>✅ Oui</td></tr>
+<tr><td>On + Active/Desirable</td><td>❌ Non (incompatible)</td></tr>
+</table></div>`
+      }
+    ]
+  },
+  {
+    id: 'mod7',
+    title: '🌐 Module 7 – DHCPv4',
+    chapters: [
+      {
+        title: 'Fonctionnement DHCP et processus DORA',
+        content: `
+<h3>DHCP — Attribution automatique d'adresses IP</h3>
+<p>DHCP (Dynamic Host Configuration Protocol) permet aux hôtes d'obtenir automatiquement une adresse IP, un masque, une passerelle et un serveur DNS.</p>
+<h3>Le processus DORA (4 étapes)</h3>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Étape</th><th>Message</th><th>Direction</th><th>Description</th></tr>
+<tr><td>1</td><td><strong>DHCPDISCOVER</strong></td><td>Client → Broadcast</td><td>Le client cherche un serveur DHCP</td></tr>
+<tr><td>2</td><td><strong>DHCPOFFER</strong></td><td>Serveur → Client</td><td>Le serveur propose une adresse</td></tr>
+<tr><td>3</td><td><strong>DHCPREQUEST</strong></td><td>Client → Broadcast</td><td>Le client accepte l'offre</td></tr>
+<tr><td>4</td><td><strong>DHCPACK</strong></td><td>Serveur → Client</td><td>Le serveur confirme l'attribution</td></tr>
+</table></div>
+<div class="ls-abbr">
+  <div><span>DHCP</span> Dynamic Host Configuration Protocol — port UDP 67 (serveur), 68 (client)</div>
+  <div><span>DORA</span> Discover, Offer, Request, Acknowledge — les 4 messages DHCP</div>
+  <div><span>Lease</span> Bail DHCP — durée pendant laquelle l'adresse est attribuée à un hôte</div>
+  <div><span>Binding</span> Liaison DHCP — association adresse IP ↔ adresse MAC dans la table du serveur</div>
+</div>`
+      },
+      {
+        title: 'Configuration DHCPv4 sur routeur Cisco',
+        content: `
+<h3>Configurer un serveur DHCP sur un routeur IOS</h3>
+<div class="ls-code">! Exclure des adresses (passerelles, serveurs)
+Router(config)# ip dhcp excluded-address 192.168.1.1 192.168.1.10
+
+! Créer le pool DHCP
+Router(config)# ip dhcp pool LAN-POOL
+Router(dhcp-config)# network 192.168.1.0 255.255.255.0   ← réseau
+Router(dhcp-config)# default-router 192.168.1.1           ← passerelle
+Router(dhcp-config)# dns-server 8.8.8.8 8.8.4.4           ← DNS
+Router(dhcp-config)# domain-name cisco.com                 ← domaine
+Router(dhcp-config)# lease 7                               ← bail 7 jours
+
+! Relais DHCP (quand serveur DHCP est distant)
+Router(config)# interface GigabitEthernet0/0
+Router(config-if)# ip helper-address 10.0.0.100    ← IP du serveur DHCP
+
+! Vérification
+Router# show ip dhcp binding
+Router# show ip dhcp pool
+Router# show ip dhcp server statistics
+Router# show ip dhcp conflict</div>
+<div class="ls-box blue">
+<strong>ip helper-address</strong><br>
+Convertit les broadcasts DHCP (qui ne traversent pas les routeurs) en <strong>unicast</strong> vers l'adresse du serveur DHCP. Permet d'avoir un seul serveur DHCP pour plusieurs sous-réseaux.
+</div>`
+      }
+    ]
+  },
+  {
+    id: 'mod8',
+    title: '🌍 Module 8 – SLAAC et DHCPv6',
+    chapters: [
+      {
+        title: 'Configuration automatique IPv6 — SLAAC',
+        content: `
+<h3>SLAAC — Stateless Address AutoConfiguration</h3>
+<p>SLAAC permet à un hôte IPv6 de s'auto-configurer <strong>sans serveur DHCPv6</strong>, en utilisant les annonces du routeur (RA).</p>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Mode</th><th>Source de l'adresse</th><th>Source des infos (DNS, etc.)</th></tr>
+<tr><td><strong>SLAAC uniquement</strong></td><td>RA du routeur</td><td>RA du routeur (RDNSS)</td></tr>
+<tr><td><strong>SLAAC + DHCPv6 sans état</strong></td><td>RA du routeur</td><td>Serveur DHCPv6 (DNS, domaine)</td></tr>
+<tr><td><strong>DHCPv6 avec état</strong></td><td>Serveur DHCPv6</td><td>Serveur DHCPv6 (tout)</td></tr>
+</table></div>
+<div class="ls-code">! Activer le routage IPv6 (requis avant toute config IPv6)
+Router(config)# ipv6 unicast-routing
+
+! Les messages RA sont envoyés automatiquement sur les interfaces IPv6
+! Configurer une interface IPv6
+Router(config)# interface GigabitEthernet0/0
+Router(config-if)# ipv6 address 2001:db8:1::/64 eui-64
+Router(config-if)# ipv6 address fe80::1 link-local
+Router(config-if)# no shutdown</div>
+<div class="ls-abbr">
+  <div><span>SLAAC</span> Stateless Address AutoConfiguration — auto-config IPv6 sans serveur DHCP</div>
+  <div><span>RA</span> Router Advertisement — annonce du routeur IPv6 contenant les préfixes réseau</div>
+  <div><span>RS</span> Router Solicitation — demande d'un hôte pour obtenir rapidement un RA</div>
+  <div><span>EUI-64</span> Extended Unique Identifier 64 bits — méthode de dérivation de l'adresse IPv6 à partir de la MAC</div>
+  <div><span>DAD</span> Duplicate Address Detection — vérification qu'une adresse IPv6 est unique avant utilisation</div>
+  <div><span>Link-local</span> Adresse IPv6 valide uniquement sur le lien local (préfixe fe80::/10)</div>
+</div>`
+      },
+      {
+        title: 'DHCPv6 — Processus et configuration',
+        content: `
+<h3>Processus DHCPv6 (4 étapes)</h3>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Étape</th><th>Message</th><th>Direction</th></tr>
+<tr><td>1</td><td><strong>SOLICIT</strong></td><td>Client → Multicast (ff02::1:2)</td></tr>
+<tr><td>2</td><td><strong>ADVERTISE</strong></td><td>Serveur → Client</td></tr>
+<tr><td>3</td><td><strong>REQUEST</strong></td><td>Client → Multicast</td></tr>
+<tr><td>4</td><td><strong>REPLY</strong></td><td>Serveur → Client</td></tr>
+</table></div>
+<div class="ls-code">! DHCPv6 avec état sur le routeur
+Router(config)# ipv6 dhcp pool DHCPv6-POOL
+Router(config-dhcpv6)# address prefix 2001:db8:1::/64 lifetime infinite
+Router(config-dhcpv6)# dns-server 2001:4860:4860::8888
+Router(config-dhcpv6)# domain-name cisco.com
+
+Router(config)# interface GigabitEthernet0/0
+Router(config-if)# ipv6 dhcp server DHCPv6-POOL
+Router(config-if)# ipv6 nd managed-config-flag     ← flag M = DHCPv6 avec état
+Router(config-if)# ipv6 nd other-config-flag       ← flag O = DHCPv6 sans état</div>
+<div class="ls-abbr">
+  <div><span>M flag</span> Managed Address Configuration — indique aux hôtes d'utiliser DHCPv6 avec état</div>
+  <div><span>O flag</span> Other Configuration — indique d'utiliser DHCPv6 pour les infos autres que l'adresse</div>
+  <div><span>DHCPv6 stateful</span> DHCPv6 avec état — le serveur assigne et gère toutes les adresses</div>
+  <div><span>DHCPv6 stateless</span> DHCPv6 sans état — SLAAC pour l'adresse, DHCPv6 pour le reste</div>
+</div>`
+      }
+    ]
+  },
+  {
+    id: 'mod9',
+    title: '🔄 Module 9 – FHRP (Redondance Passerelle)',
+    chapters: [
+      {
+        title: 'Problème de point de défaillance unique',
+        content: `
+<h3>Pourquoi la redondance de passerelle ?</h3>
+<p>Si la passerelle par défaut d'un hôte tombe, l'hôte perd l'accès à Internet. Les protocoles FHRP permettent à <strong>plusieurs routeurs</strong> de partager une adresse IP virtuelle.</p>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Protocole</th><th>Standard</th><th>Développeur</th><th>Particularité</th></tr>
+<tr><td><strong>HSRP</strong></td><td>Propriétaire</td><td>Cisco</td><td>Un actif + un standby</td></tr>
+<tr><td><strong>VRRP</strong></td><td>IEEE 5798</td><td>Ouvert</td><td>Un master + backups</td></tr>
+<tr><td><strong>GLBP</strong></td><td>Propriétaire</td><td>Cisco</td><td>Load balancing actif</td></tr>
+</table></div>
+<div class="ls-abbr">
+  <div><span>FHRP</span> First Hop Redundancy Protocol — protocoles de redondance de passerelle</div>
+  <div><span>HSRP</span> Hot Standby Router Protocol — protocole Cisco de redondance de passerelle</div>
+  <div><span>VRRP</span> Virtual Router Redundancy Protocol — standard ouvert IEEE équivalent à HSRP</div>
+  <div><span>GLBP</span> Gateway Load Balancing Protocol — Cisco, permet le load balancing actif-actif</td></tr>
+  <div><span>VIP</span> Virtual IP — adresse IP virtuelle partagée par les routeurs du groupe FHRP</div>
+</div>`
+      },
+      {
+        title: 'Configuration HSRP',
+        content: `
+<h3>HSRP — Hot Standby Router Protocol</h3>
+<div class="ls-code">! Sur le routeur ACTIF (priorité haute)
+R1(config)# interface GigabitEthernet0/0
+R1(config-if)# ip address 192.168.1.2 255.255.255.0
+R1(config-if)# standby 1 ip 192.168.1.1       ← IP virtuelle
+R1(config-if)# standby 1 priority 110          ← Priorité (défaut=100)
+R1(config-if)# standby 1 preempt              ← reprend le rôle actif si revient
+R1(config-if)# standby version 2               ← HSRPv2
+
+! Sur le routeur STANDBY (priorité normale)
+R2(config)# interface GigabitEthernet0/0
+R2(config-if)# ip address 192.168.1.3 255.255.255.0
+R2(config-if)# standby 1 ip 192.168.1.1
+R2(config-if)# standby 1 priority 90
+
+! Vérification
+R1# show standby
+R1# show standby brief</div>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>État HSRP</th><th>Description</th></tr>
+<tr><td><strong>Active</strong></td><td>Traite le trafic vers l'IP virtuelle</td></tr>
+<tr><td><strong>Standby</strong></td><td>Prêt à prendre le relais (surveille l'actif)</td></tr>
+<tr><td><strong>Listen</strong></td><td>Connaît l'IP virtuelle mais n'est ni actif ni standby</td></tr>
+<tr><td><strong>Init</strong></td><td>État initial au démarrage</td></tr>
+</table></div>
+<div class="ls-box blue">
+<strong>HSRPv1 vs HSRPv2</strong><br>
+• HSRPv1 : groupes 0-255, adresse multicast 224.0.0.2<br>
+• HSRPv2 : groupes 0-4095, adresse multicast 224.0.0.102, supporte IPv6
+</div>`
+      }
+    ]
+  },
+  {
+    id: 'mod1011',
+    title: '🔒 Modules 10–11 – Sécurité LAN',
+    chapters: [
+      {
+        title: 'Attaques courantes sur les réseaux LAN',
+        content: `
+<h3>Types d'attaques sur la couche 2</h3>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Attaque</th><th>Description</th><th>Contre-mesure</th></tr>
+<tr><td><strong>MAC Flooding</strong></td><td>Inonde la table CAM avec de fausses MAC → switch agit comme hub</td><td>Port Security</td></tr>
+<tr><td><strong>DHCP Starvation</strong></td><td>Épuise le pool DHCP avec de fausses requêtes</td><td>DHCP Snooping</td></tr>
+<tr><td><strong>DHCP Spoofing</strong></td><td>Faux serveur DHCP répond aux clients</td><td>DHCP Snooping</td></tr>
+<tr><td><strong>ARP Spoofing</strong></td><td>Fausses réponses ARP → empoisonnement ARP / MITM</td><td>Dynamic ARP Inspection</td></tr>
+<tr><td><strong>VLAN Hopping</strong></td><td>Accès à des VLANs non autorisés via DTP ou double-étiquetage</td><td>Désactiver DTP, VLAN natif inutilisé</td></tr>
+<tr><td><strong>STP Manipulation</strong></td><td>Faux pont racine perturbant la topologie STP</td><td>BPDU Guard, Root Guard</td></tr>
+</table></div>
+<div class="ls-abbr">
+  <div><span>MITM</span> Man-In-The-Middle — attaque où l'attaquant s'interpose entre deux hôtes</div>
+  <div><span>ARP Spoofing</span> Empoisonnement du cache ARP — association fausse IP↔MAC</div>
+  <div><span>VLAN Hopping</span> Saut entre VLANs non autorisés via exploitation de DTP</td></tr>
+</div>`
+      },
+      {
+        title: 'Port Security',
+        content: `
+<h3>Port Security — Limiter les adresses MAC</h3>
+<div class="ls-code">! Activer Port Security sur un port d'accès
+Switch(config)# interface FastEthernet0/1
+Switch(config-if)# switchport mode access           ← requis avant port-security
+Switch(config-if)# switchport port-security
+Switch(config-if)# switchport port-security maximum 3        ← max 3 MACs
+Switch(config-if)# switchport port-security mac-address sticky ← apprentissage auto
+Switch(config-if)# switchport port-security violation shutdown  ← action violation
+
+! Vérification
+Switch# show port-security
+Switch# show port-security interface FastEthernet0/1
+Switch# show port-security address</div>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Mode de violation</th><th>Trafic bloqué</th><th>Log syslog</th><th>Port désactivé</th></tr>
+<tr><td><strong>Protect</strong></td><td>✅ Oui</td><td>❌ Non</td><td>❌ Non</td></tr>
+<tr><td><strong>Restrict</strong></td><td>✅ Oui</td><td>✅ Oui</td><td>❌ Non</td></tr>
+<tr><td><strong>Shutdown</strong> (défaut)</td><td>✅ Oui</td><td>✅ Oui</td><td>✅ Oui (err-disable)</td></tr>
+</table></div>
+<div class="ls-code">! Réactiver un port en err-disable
+Switch(config)# interface FastEthernet0/1
+Switch(config-if)# shutdown
+Switch(config-if)# no shutdown</div>`
+      },
+      {
+        title: 'DHCP Snooping et DAI',
+        content: `
+<h3>DHCP Snooping — Filtrer les messages DHCP</h3>
+<div class="ls-code">! Activer DHCP Snooping globalement
+Switch(config)# ip dhcp snooping
+Switch(config)# ip dhcp snooping vlan 10,20
+
+! Configurer les ports de confiance (vers serveurs DHCP légitimes)
+Switch(config)# interface GigabitEthernet0/1    ← port uplink vers routeur/serveur
+Switch(config-if)# ip dhcp snooping trust
+
+! Limiter le taux de DHCP sur les ports non-trust
+Switch(config)# interface range FastEthernet0/1-24
+Switch(config-if-range)# ip dhcp snooping limit rate 15</div>
+<h3>DAI — Dynamic ARP Inspection</h3>
+<div class="ls-code">! Activer DAI (dépend de la table DHCP Snooping)
+Switch(config)# ip arp inspection vlan 10,20
+
+! Port de confiance (uplinks)
+Switch(config-if)# ip arp inspection trust
+
+! Vérification
+Switch# show ip dhcp snooping binding
+Switch# show ip arp inspection</div>
+<div class="ls-abbr">
+  <div><span>DHCP Snooping</span> Filtre les messages DHCP — seuls les ports "trusted" peuvent envoyer des DHCP OFFER</div>
+  <div><span>DAI</span> Dynamic ARP Inspection — valide les réponses ARP contre la table DHCP Snooping</div>
+  <div><span>Trusted port</span> Port de confiance — connecté à un serveur/routeur légitime</div>
+  <div><span>Untrusted port</span> Port non fiable — connecté à des hôtes finaux (clients)</div>
+</div>`
+      }
+    ]
+  },
+  {
+    id: 'mod1213',
+    title: '📶 Modules 12–13 – WLAN (Réseaux Sans Fil)',
+    chapters: [
+      {
+        title: 'Standards WiFi et fréquences',
+        content: `
+<h3>Standards IEEE 802.11 — Vue d'ensemble</h3>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Standard</th><th>Nom WiFi</th><th>Bande</th><th>Débit max</th><th>Portée int.</th></tr>
+<tr><td><strong>802.11b</strong></td><td>WiFi 1</td><td>2.4 GHz</td><td>11 Mbps</td><td>~35m</td></tr>
+<tr><td><strong>802.11a</strong></td><td>WiFi 2</td><td>5 GHz</td><td>54 Mbps</td><td>~35m</td></tr>
+<tr><td><strong>802.11g</strong></td><td>WiFi 3</td><td>2.4 GHz</td><td>54 Mbps</td><td>~38m</td></tr>
+<tr><td><strong>802.11n</strong></td><td>WiFi 4</td><td>2.4 & 5 GHz</td><td>600 Mbps</td><td>~70m</td></tr>
+<tr><td><strong>802.11ac</strong></td><td>WiFi 5</td><td>5 GHz</td><td>3.5 Gbps</td><td>~35m</td></tr>
+<tr><td><strong>802.11ax</strong></td><td>WiFi 6</td><td>2.4 & 5 & 6 GHz</td><td>9.6 Gbps</td><td>~30m</td></tr>
+</table></div>
+<div class="ls-box blue">
+<strong>2.4 GHz vs 5 GHz</strong><br>
+• <strong>2.4 GHz</strong> : meilleure portée, plus de pénétration des murs, mais plus de congestion (micro-ondes, Bluetooth)<br>
+• <strong>5 GHz</strong> : débit plus élevé, moins de congestion, mais portée plus courte
+</div>
+<div class="ls-abbr">
+  <div><span>SSID</span> Service Set Identifier — nom du réseau WiFi diffusé par l'AP</div>
+  <div><span>BSSID</span> Basic Service Set Identifier — adresse MAC de l'AP</div>
+  <div><span>MIMO</span> Multiple-Input Multiple-Output — antennes multiples pour améliorer le débit (802.11n/ac/ax)</div>
+  <div><span>OFDM</span> Orthogonal Frequency Division Multiplexing — modulation utilisée par 802.11a/g/n/ac</td></tr>
+  <div><span>DSSS</span> Direct Sequence Spread Spectrum — modulation utilisée par 802.11b</div>
+</div>`
+      },
+      {
+        title: 'Topologies et modes WiFi',
+        content: `
+<h3>Modes et topologies WiFi</h3>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Mode</th><th>Description</th><th>Utilisation</th></tr>
+<tr><td><strong>Infrastructure (BSS)</strong></td><td>Clients se connectent via un AP central</td><td>Réseau d'entreprise standard</td></tr>
+<tr><td><strong>Ad-hoc (IBSS)</strong></td><td>Connexion directe peer-to-peer sans AP</td><td>Partage de fichiers temporaire</td></tr>
+<tr><td><strong>ESS</strong></td><td>Plusieurs AP reliés pour couverture étendue</td><td>Grands bâtiments, campus</td></tr>
+<tr><td><strong>Mesh</strong></td><td>AP se connectent entre eux sans câble</td><td>Couverture difficile à câbler</td></tr>
+</table></div>
+<div class="ls-abbr">
+  <div><span>AP</span> Access Point — point d'accès WiFi</div>
+  <div><span>BSS</span> Basic Service Set — réseau WiFi avec un seul AP</div>
+  <div><span>ESS</span> Extended Service Set — réseau WiFi avec plusieurs AP connectés</div>
+  <div><span>IBSS</span> Independent BSS — réseau ad-hoc sans AP</div>
+  <div><span>DS</span> Distribution System — infrastructure filaire reliant les AP (Ethernet)</div>
+  <div><span>Roaming</span> Itinérance — passage d'un AP à un autre dans un ESS</div>
+</div>`
+      },
+      {
+        title: 'Sécurité WiFi — WEP, WPA, WPA2, WPA3',
+        content: `
+<h3>Évolution de la sécurité WiFi</h3>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Protocole</th><th>Chiffrement</th><th>Authentification</th><th>Sécurité</th></tr>
+<tr><td><strong>WEP</strong></td><td>RC4 (40/104 bits)</td><td>Clé partagée</td><td>❌ Cassé</td></tr>
+<tr><td><strong>WPA</strong></td><td>TKIP + RC4</td><td>PSK / 802.1X</td><td>⚠️ Faible</td></tr>
+<tr><td><strong>WPA2</strong></td><td>AES-CCMP</td><td>PSK / 802.1X</td><td>✅ Solide</td></tr>
+<tr><td><strong>WPA3</strong></td><td>AES-GCMP-256</td><td>SAE / 802.1X</td><td>✅✅ Très fort</td></tr>
+</table></div>
+<div class="ls-box green">
+<strong>WPA2 Personnel vs Entreprise</strong><br>
+• <strong>Personnel (PSK)</strong> : clé pré-partagée identique pour tous — maisons, PME<br>
+• <strong>Entreprise (802.1X)</strong> : chaque utilisateur s'authentifie avec ses propres identifiants via RADIUS
+</div>
+<div class="ls-abbr">
+  <div><span>WEP</span> Wired Equivalent Privacy — protocole de sécurité WiFi obsolète (cassé)</div>
+  <div><span>WPA</span> WiFi Protected Access — amélioration de WEP (TKIP), encore vulnérable</div>
+  <div><span>WPA2</span> WiFi Protected Access 2 — standard actuel avec AES-CCMP</div>
+  <div><span>WPA3</span> WiFi Protected Access 3 — dernière génération avec SAE et GCMP-256</div>
+  <div><span>PSK</span> Pre-Shared Key — clé pré-partagée pour l'authentification WiFi Personnel</div>
+  <div><span>SAE</span> Simultaneous Authentication of Equals — méthode WPA3 résistant aux attaques dictionnaire</div>
+  <div><span>RADIUS</span> Remote Authentication Dial-In User Service — serveur d'authentification centralisé</div>
+  <div><span>802.1X</span> Standard IEEE pour l'authentification par port (EAP via RADIUS)</div>
+  <div><span>EAP</span> Extensible Authentication Protocol — framework d'authentification pour 802.1X</div>
+</div>`
+      },
+      {
+        title: 'WLC — Wireless LAN Controller',
+        content: `
+<h3>Architecture WiFi d'entreprise avec WLC</h3>
+<p>Un <strong>WLC (Wireless LAN Controller)</strong> gère centralement tous les points d'accès du réseau.</p>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Aspect</th><th>AP Autonome</th><th>AP Léger (avec WLC)</th></tr>
+<tr><td>Configuration</td><td>Locale sur chaque AP</td><td>Centrale sur le WLC</td></tr>
+<tr><td>Firmware</td><td>Manuel par AP</td><td>Déployé par WLC</td></tr>
+<tr><td>Roaming</td><td>Difficile</td><td>Transparent (fast roaming)</td></tr>
+<tr><td>Politique de sécurité</td><td>AP par AP</td><td>Centralisée sur WLC</td></tr>
+</table></div>
+<div class="ls-code">! Vérification sur un AP Cisco autonome
+AP# show interfaces dot11Radio 0
+AP# show dot11 associations
+
+! Sur un WLC (interface web ou CLI)
+WLC> show ap summary
+WLC> show client summary</div>
+<div class="ls-abbr">
+  <div><span>WLC</span> Wireless LAN Controller — contrôleur WiFi centralisé</div>
+  <div><span>LAP</span> Lightweight Access Point — AP léger géré par un WLC</div>
+  <div><span>CAPWAP</span> Control and Provisioning of Wireless Access Points — protocole WLC ↔ AP (UDP 5246/5247)</div>
+  <div><span>LWAPP</span> Lightweight AP Protocol — ancêtre de CAPWAP (Cisco propriétaire)</div>
+  <div><span>FlexConnect</span> Mode AP Cisco permettant la commutation locale même si WLC injoignable</div>
+</div>`
+      }
+    ]
+  },
+  {
+    id: 'mod1416',
+    title: '🛣️ Modules 14–16 – Routage Statique et IP',
+    chapters: [
+      {
+        title: 'Table de routage et Distance Administrative',
+        content: `
+<h3>La table de routage — Base du routage IP</h3>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Code</th><th>Source de route</th><th>Distance Admin.</th></tr>
+<tr><td><strong>C</strong></td><td>Directement connecté</td><td>0</td></tr>
+<tr><td><strong>L</strong></td><td>Adresse locale de l'interface (/32 ou /128)</td><td>0</td></tr>
+<tr><td><strong>S</strong></td><td>Route statique</td><td>1</td></tr>
+<tr><td><strong>S*</strong></td><td>Route statique par défaut</td><td>1</td></tr>
+<tr><td><strong>D</strong></td><td>EIGRP interne</td><td>90</td></tr>
+<tr><td><strong>O</strong></td><td>OSPF</td><td>110</td></tr>
+<tr><td><strong>R</strong></td><td>RIP</td><td>120</td></tr>
+<tr><td><strong>B</strong></td><td>BGP</td><td>20 (eBGP) / 200 (iBGP)</td></tr>
+</table></div>
+<div class="ls-box blue">
+<strong>Règle des plus longs préfixes</strong><br>
+Quand plusieurs routes correspondent à une destination, le routeur choisit celle avec le <strong>préfixe le plus long</strong> (la plus spécifique).<br>
+Exemple : /24 est préféré à /16 qui est préféré à /0.
+</div>
+<div class="ls-abbr">
+  <div><span>DA</span> Distance Administrative — indice de fiabilité d'une source de routage (plus bas = plus fiable)</div>
+  <div><span>Metric</span> Métrique — valeur utilisée par un protocole de routage pour choisir la meilleure route</div>
+  <div><span>Longest prefix match</span> Correspondance de préfixe la plus longue — règle de sélection des routes</div>
+  <div><span>show ip route</span> — affiche la table de routage IPv4</div>
+  <div><span>show ipv6 route</span> — affiche la table de routage IPv6</div>
+</div>`
+      },
+      {
+        title: 'Routes statiques IPv4 et IPv6',
+        content: `
+<h3>Types de routes statiques</h3>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Type</th><th>Spécifie</th><th>Recherche récursive</th></tr>
+<tr><td><strong>Récursive</strong></td><td>Adresse du tronçon suivant seulement</td><td>✅ Oui (2 recherches)</td></tr>
+<tr><td><strong>Connectée</strong></td><td>Interface de sortie seulement</td><td>❌ Non</td></tr>
+<tr><td><strong>Entièrement spécifiée</strong></td><td>Interface + tronçon suivant</td><td>❌ Non</td></tr>
+</table></div>
+<div class="ls-code">! IPv4 — Route récursive (tronçon seulement)
+Router(config)# ip route 192.168.2.0 255.255.255.0 10.0.0.2
+
+! IPv4 — Route connectée (interface seulement — point-à-point)
+Router(config)# ip route 192.168.2.0 255.255.255.0 Serial0/0/0
+
+! IPv4 — Route entièrement spécifiée (Ethernet — obligatoire)
+Router(config)# ip route 192.168.2.0 255.255.255.0 GigabitEthernet0/1 10.0.0.2
+
+! IPv4 — Route par défaut
+Router(config)# ip route 0.0.0.0 0.0.0.0 Serial0/0/0
+
+! IPv6 — Activer le routage IPv6 d'abord!
+Router(config)# ipv6 unicast-routing
+
+! IPv6 — Route statique
+Router(config)# ipv6 route 2001:db8:2::/64 2001:db8:1::2
+
+! IPv6 — Route par défaut
+Router(config)# ipv6 route ::/0 GigabitEthernet0/1 fe80::2
+
+! Route statique flottante (DA=120 > OSPF=110)
+Router(config)# ip route 0.0.0.0 0.0.0.0 Serial0/1/0 120</div>
+<div class="ls-box orange">
+<strong>Règle importante — Ethernet et route entièrement spécifiée</strong><br>
+Sur un segment <strong>multi-accès</strong> (Ethernet), utiliser TOUJOURS une route entièrement spécifiée (interface + IP tronçon). Sans l'IP du tronçon, le routeur ne sait pas quelle MAC cibler avec ARP.
+</div>`
+      },
+      {
+        title: 'Routes flottantes et secours',
+        content: `
+<h3>Routes statiques flottantes — Backup de liaison</h3>
+<p>Une route flottante n'apparaît dans la table que si la route principale est hors service. Elle a une <strong>DA supérieure</strong> à la route principale.</p>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Route principale</th><th>DA principale</th><th>DA flottante minimum</th></tr>
+<tr><td>Route statique standard</td><td>1</td><td>≥ 2</td></tr>
+<tr><td>EIGRP interne</td><td>90</td><td>≥ 91</td></tr>
+<tr><td>OSPF</td><td>110</td><td>≥ 111</td></tr>
+<tr><td>RIP</td><td>120</td><td>≥ 121</td></tr>
+</table></div>
+<div class="ls-code">! Scenario : route principale OSPF (DA=110)
+! Route flottante de secours
+Router(config)# ip route 0.0.0.0 0.0.0.0 Serial0/1/0 120
+
+! Test d'une route flottante
+Router(config)# interface Serial0/0/0
+Router(config-if)# shutdown          ← simule une panne
+Router# show ip route                ← la route flottante doit apparaître
+Router(config-if)# no shutdown       ← restauration</div>
+<div class="ls-abbr">
+  <div><span>Route flottante</span> Route statique avec DA élevée, activée uniquement si la route principale tombe</div>
+  <div><span>Convergence</span> Temps pour que le réseau reprenne un état stable après un changement de topologie</div>
+  <div><span>Passerelle de dernier recours</span> Route par défaut (0.0.0.0/0 ou ::/0) utilisée quand aucune route spécifique n'existe</div>
+</div>`
+      },
+      {
+        title: 'Vérification et dépannage du routage',
+        content: `
+<h3>Commandes de vérification essentielles</h3>
+<div class="ls-code">! Table de routage
+Router# show ip route
+Router# show ip route static
+Router# show ip route 192.168.2.0
+Router# show ipv6 route
+Router# show ipv6 route static
+
+! Interfaces
+Router# show ip interface brief        ← résumé état/IP de toutes les interfaces
+Router# show interfaces GigabitEthernet0/0
+
+! Statistiques de protocole
+Router# show ip protocols
+
+! Diagnostic
+Router# ping 192.168.2.1
+Router# traceroute 192.168.2.1
+
+! Table ARP
+Router# show arp
+Router# show ip arp</div>
+<div class="ls-table-wrap"><table class="ls-table">
+<tr><th>Problème</th><th>Cause probable</th><th>Solution</th></tr>
+<tr><td>Route non dans la table</td><td>Interface de sortie down</td><td>Activer l'interface (no shutdown)</td></tr>
+<tr><td>Ping échoue</td><td>Route manquante ou mauvais tronçon</td><td>Vérifier show ip route, corriger</td></tr>
+<tr><td>Route flottante toujours active</td><td>DA trop basse (< route principale)</td><td>Augmenter la DA de la flottante</td></tr>
+<tr><td>IPv6 ne route pas</td><td>ipv6 unicast-routing manquant</td><td>Ajouter ipv6 unicast-routing</td></tr>
+</table></div>`
+      }
+    ]
+  }
+];
+
+// ==================== LESSONS RENDER ====================
+let currentLessonId = null;
+let currentChapterIdx = 0;
+
+function showLessonsPage(){
+  setActiveNav('lessons');
+  buildLessonsLayout();
+}
+
+function buildLessonsLayout(){
+  // Build nav
+  let nav = '';
+  LESSONS.forEach(mod => {
+    nav += `<div class="lessons-nav-title">${mod.title.split('–')[0].trim()}</div>`;
+    nav += `<div class="lnav-item" onclick="selectLesson('${mod.id}',0)" id="lnav-${mod.id}">${mod.title.replace(/^[^–]+–\s*/,'')}</div>`;
+    if(currentLessonId===mod.id){
+      mod.chapters.forEach((ch,i)=>{
+        nav += `<div class="lnav-chapter ${i===currentChapterIdx?'active':''}" onclick="selectLesson('${mod.id}',${i})" id="lnav-${mod.id}-${i}">→ ${ch.title}</div>`;
+      });
+    }
+  });
+
+  // Build content
+  let content = '';
+  if(!currentLessonId){
+    // Welcome page
+    content = `<div class="lesson-section">
+      <h2>📚 Leçons CCNA2 SRWE</h2>
+      <p>Sélectionne un module dans le menu de gauche pour commencer à apprendre. Chaque module contient des explications détaillées, des définitions d'abréviations, des tableaux récapitulatifs et des exemples de commandes IOS.</p>
+      <div class="ls-table-wrap"><table class="ls-table">
+        <tr><th>Module</th><th>Chapitres</th></tr>
+        ${LESSONS.map(m=>`<tr><td style="cursor:pointer;color:var(--accent)" onclick="selectLesson('${m.id}',0)">${m.title}</td><td>${m.chapters.length} chapitres</td></tr>`).join('')}
+      </table></div>
+    </div>`;
+  } else {
+    const mod = LESSONS.find(m=>m.id===currentLessonId);
+    content = `<div class="lesson-section">
+      <h2>${mod.title}</h2>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.2rem">
+        ${mod.chapters.map((ch,i)=>`<button onclick="selectLesson('${mod.id}',${i})" 
+          style="padding:.35rem .8rem;border-radius:6px;border:1px solid ${i===currentChapterIdx?'var(--accent)':'var(--border)'};background:${i===currentChapterIdx?'rgba(0,212,255,.12)':'var(--s2)'};color:${i===currentChapterIdx?'var(--accent)':'var(--muted)'};cursor:pointer;font-size:.75rem;font-family:var(--sans)">
+          ${ch.title}</button>`).join('')}
+      </div>
+      ${mod.chapters[currentChapterIdx].content}
+      <div style="display:flex;justify-content:space-between;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border)">
+        ${currentChapterIdx>0?`<button onclick="selectLesson('${mod.id}',${currentChapterIdx-1})" style="padding:.5rem 1rem;border-radius:7px;border:1px solid var(--border);background:var(--s2);color:var(--text);cursor:pointer;font-family:var(--sans);font-size:.82rem">← Précédent</button>`:'<span></span>'}
+        ${currentChapterIdx<mod.chapters.length-1?`<button onclick="selectLesson('${mod.id}',${currentChapterIdx+1})" style="padding:.5rem 1rem;border-radius:7px;border:none;background:var(--accent);color:#000;cursor:pointer;font-family:var(--sans);font-size:.82rem;font-weight:700">Suivant →</button>`:'<span style="color:var(--ok);font-size:.82rem">✅ Module terminé</span>'}
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('content').innerHTML = `
+    <div class="lessons-layout" style="height:calc(100vh - 60px);margin:-1.5rem">
+      <div class="lessons-nav" id="lessonsNav">${nav}</div>
+      <div class="lessons-content">${content}</div>
+    </div>`;
+}
+
+function selectLesson(modId, chIdx){
+  currentLessonId = modId;
+  currentChapterIdx = chIdx;
+  buildLessonsLayout();
+  // Scroll to top
+  const lc = document.querySelector('.lessons-content');
+  if(lc) lc.scrollTop = 0;
+}
+
+</script>
+</body>
+</html>
